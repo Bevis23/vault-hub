@@ -7,6 +7,25 @@
 
 ---
 
+## [0.14.1] - 2026-10-20 — 上架审核反馈修正
+
+### Fixed
+
+- **manifest 描述自我指代**：去掉 "the plugin installs itself"（官方审核 Warning：
+  描述不得用 "this plugin / the plugin" 指代自己，要直接描述功能）
+- **README 增加英文简介**：官方审核要求插件描述必须含英文（目录以英文用户为主）；
+  README.md 顶部加 English TL;DR，中文完整文档不变
+
+### 顺带说明
+
+- 审核的 CSS Warning（!important × 7 / `:has` × 5）为**有意设计**：!important 用于压过
+  Obsidian 自身 `.view-content` 与 Notice 层级（见代码注释），`:has` 用于文件夹卡/图片卡
+  差异化样式，替代方案需改渲染逻辑、风险大于收益，故保留
+- 审核的 Behavior 提示（fs 直读 / vault 枚举 / 剪贴板）是产品核心能力的必然结果，
+  README「会碰到的库外文件」一节已有说明
+
+---
+
 ## [0.14.0] - 2026-10-20 — i18n 治理 + 模块拆分 + 上架准备
 
 ### Changed

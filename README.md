@@ -1,10 +1,8 @@
 # Vault Workbench｜多库工作台
 
-> 给 Obsidian 装上精美工作台 UI
-> 在一个工作台浏览、预览、编辑本机所有 Obsidian 库，无需反复切换窗口。
-> 各库保持完全隔离，切换库时可自动部署本插件。
+**English** — Vault Workbench gives Obsidian a polished multi-vault workbench UI: browse, preview and edit every local vault in one place, without switching windows. Vaults stay fully isolated, and switching to any vault sets everything up automatically. Install from Obsidian's community plugin directory (search **Vault Workbench**), or read the [install guide](docs/安装说明.md). Full English version: [README_EN](README_EN.md).
 
-[English](README_EN.md) | 中文文档
+> 🇨🇳 给 Obsidian 装上精美工作台 UI：在一个工作台浏览、预览、编辑本机所有 Obsidian 库，无需反复切换窗口。各库保持完全隔离，切换库时自动部署本插件。
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-desktop--only-blue)
