@@ -1,0 +1,59 @@
+name: 功能建议
+description: 想要什么新能力？
+title: "[Feature] "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        提建议前请先搜一下现有 Issue。已经有人提过的话，去那边点个赞 + 补充场景，比新开一条更有效。
+
+  - type: textarea
+    id: scenario
+    attributes:
+      label: 你想解决什么问题
+      description: 说清楚场景，而不只是「加个 XX 按钮」——场景清楚了，方案可能有更好的
+      placeholder: 我有 5 个库，每次想找「上周写的东西」要一个个库翻，很累
+    validations:
+      required: true
+
+  - type: textarea
+    id: proposal
+    attributes:
+      label: 你想象中的做法
+      description: 有想法就写，没有就跳过
+      placeholder: 能不能有个「最近修改」视图，跨库聚合显示全部库最近 7 天改过的文件
+    validations:
+      required: false
+
+  - type: textarea
+    id: alternatives
+    attributes:
+      label: 你试过 / 考虑过的其他办法
+      placeholder: 用 Dataview 写过一个查询，但跨库不行
+    validations:
+      required: false
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: 大概属于哪块
+      options:
+        - 浏览与导航
+        - 搜索
+        - 预览与编辑
+        - 多库管理
+        - 外观
+        - 设置
+        - 性能
+        - 其他 / 不确定
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: contribute
+    attributes:
+      label: 参与
+      options:
+        - label: 我愿意帮忙实现这个功能（PR 欢迎）
+          required: false

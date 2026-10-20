@@ -1,0 +1,91 @@
+name: Bug 反馈
+description: 哪里不对劲？
+title: "[Bug] "
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢反馈！填得越细，修得越快。提交前请先搜一下现有 Issue 避免重复。
+
+  - type: textarea
+    id: what-happened
+    attributes:
+      label: 发生了什么
+      description: 清楚描述问题现象
+      placeholder: 点开外部库的 md 后，图片显示成「找不到 "img/1.jpg"」
+    validations:
+      required: true
+
+  - type: textarea
+    id: reproduce
+    attributes:
+      label: 复现步骤
+      description: 一步一步写，让别人能照着做出来
+      placeholder: |
+        1. 切到「工作」库
+        2. 进入 `笔记/2024` 文件夹
+        3. 点开 `周报.md`
+        4. 看到 …
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected
+    attributes:
+      label: 期望的行为
+      placeholder: 图片应该正常显示出来
+    validations:
+      required: true
+
+  - type: input
+    id: plugin-version
+    attributes:
+      label: 插件版本
+      description: 设置 → 第三方插件 → Vault Workbench 里能看到
+      placeholder: 0.4.0
+    validations:
+      required: true
+
+  - type: input
+    id: obsidian-version
+    attributes:
+      label: Obsidian 版本
+      placeholder: 1.5.8
+    validations:
+      required: true
+
+  - type: dropdown
+    id: os
+    attributes:
+      label: 操作系统
+      options:
+        - Windows
+        - macOS
+        - Linux
+    validations:
+      required: true
+
+  - type: dropdown
+    id: vault-kind
+    attributes:
+      label: 问题出在哪个库
+      options:
+        - 当前库
+        - 外部库（非当前打开的库）
+        - 都有 / 不确定
+    validations:
+      required: true
+
+  - type: textarea
+    id: console
+    attributes:
+      label: 控制台报错
+      description: `Ctrl + Shift + I` 打开开发者工具，把红色的报错贴上来
+      render: shell
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: 截图
+      description: 能贴图就贴，一张图顶一百个字

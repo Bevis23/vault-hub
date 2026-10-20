@@ -1,0 +1,2816 @@
+/* ============================================================================
+ *  Vault Hub · 多库工作台 —— 样式层
+ * ----------------------------------------------------------------------------
+ *  v0.13.0 重构基线（改样式前先读这四行）：
+ *   1. 颜色 / 圆角 / 间距 / 阴影一律取 Obsidian 原生 CSS 变量，本文件不写死任何色值
+ *   2. 不做毛玻璃：没有 backdrop-filter、没有半透明玻璃面板、没有渐变高光 / 内阴影
+ *   3. 视觉权重：库导航 > 搜索 > 笔记卡片 > 统计卡片（越靠后越"轻"）
+ *   4. 只改样式层，不动 TS/JS —— 下面这些 class 全部由 src/ 生成，改名会让功能裸奔
+ *
+ *  关键 class 速查（按分区，方括号是 JS 动态加的状态类）：
+ *   骨架    .vwb-host（挂在 Obsidian 的 .view-content 上）/ .vwb-root / .vwb-bg（壁纸层）
+ *           / .vwb-layer / .vwb-main / .vwb-content / .vwb-body / .vwb-area
+ *   导航    .vwb-rail[.is-collapsed] / .vwb-rail-head / .vwb-rail-t / .vwb-rail-tg
+ *           / .vwb-vault[.is-on] / .vwb-dot / .vwb-vault-name / .vwb-cnt
+ *           / .vwb-badge[.is-warn] / .vwb-mini[.is-on] / .vwb-mini-ic / .vwb-mini-tx
+ *   顶栏    .vwb-topbar（z-index:30 别删，见文末注释）/ .vwb-search / .vwb-search-x[.is-on]
+ *           / .vwb-btn[.vwb-btn-pri|.vwb-btn-sm|.is-danger] / .vwb-menu / .vwb-menu-btn
+ *   统计    .vwb-stats / .vwb-stat[.vwb-stat-warn] / .vwb-stat-k / .vwb-stat-v
+ *   工具条  .vwb-bar / .vwb-nav[.is-off] / .vwb-crumb / .vwb-crumb-p[.is-cur]
+ *           / .vwb-crumb-up / .vwb-tab[.is-on] / .vwb-spacer / .vwb-openmode
+ *   文件区  .vwb-grid[.tight|.comfy|.loose] / .vwb-card[.is-sel|.is-multi|.is-empty]
+ *           / .vwb-card-nm / .vwb-nm-t / .vwb-ico / .vwb-card-thumb / .vwb-card-mt
+ *           / .vwb-card-eye / .vwb-row[.is-sel|.is-multi|.is-child|.is-empty]
+ *           / .vwb-row-nm / .vwb-row-mt / .vwb-row-tip / .vwb-caret[.is-open]
+ *           / .vwb-folder / .vwb-tag / .vwb-empty / .vwb-batch / .vwb-batch-n
+ *   预览    .vwb-prev[.is-on|.is-max|.float|.bottom] / .vwb-prev-head / .vwb-prev-tools
+ *           / .vwb-prev-x / .vwb-docmode[.is-on] / .vwb-prev-t / .vwb-prev-m
+ *           / .vwb-prev-main / .vwb-prev-body[.vwb-doc|.is-editing] / .vwb-prev-foot
+ *           / .vwb-outline[.is-on] / .vwb-outline-i[.lv1~.lv6]
+ *   编辑器  .vwb-edit / .vwb-edit-bar / .vwb-edit-t / .vwb-edit-hint / .vwb-editor
+ *           / .vwb-live / .vwb-canvas / .vwb-blk[.is-editing|.is-blank|.is-pending]
+ *           / .vwb-blk-ta[.is-h1~.is-h6]
+ *   浮层    .vwb-menu-pop[.vwb-newmenu-pop|.is-on] / .vwb-menu-i[.is-on]
+ *           / .vwb-ctx[.is-flip|.is-flat] / .vwb-ctx-i[.is-danger|.is-off|.has-sub]
+ *           / .vwb-ctx-sub / .vwb-dlg / .vwb-move / .vwb-marquee
+ *   抽屉    .vwb-drawer[.is-on] / .vwb-drawer-head / .vwb-drawer-nav-i[.is-on]
+ *           / .vwb-drawer-body / .vwb-sec / .vwb-mode[.is-on] / .vwb-chip[.is-on|.is-off]
+ *           / .vwb-in / .vwb-tg / .vwb-vrow / .vwb-log / .vwb-kv
+ *   跨库搜索 .vwb-xhit / .vwb-xhit-v[.is-cur] / .vwb-xhit-sn mark / .vwb-xhit-byname
+ * ========================================================================== */
+
+/* ---------------------------------------------------------------------------
+ *  0. 语义变量层
+ * -------------------------------------------------------------------------
+ *  --vwb-acc / --vwb-dim / --vwb-blur 由 JS（61-view-appearance.js）以**行内样式**
+ *  写进 .vwb-root，所以这里给的是「JS 没写」时的兜底值 —— 兜底到主题色，
+ *  而不是写死一个紫色。
+ *  注意：--vwb-glass 是 JS 生成的 rgba(255,255,255,x)，浅色主题下是错的，
+ *  整个文件**不再使用它**（预设里的「面板通透度」因此只影响壁纸，见 .vwb-bg）。
+ */
+.vwb-root {
+  --vwb-acc: var(--interactive-accent);
+  --vwb-dim: 0.25;
+  --vwb-blur: 0px;
+
+  /* 主题色：用户选的 accent 优先，没配就跟着主题走 */
+  --vwb-accent: var(--vwb-acc, var(--interactive-accent));
+  --vwb-tint: color-mix(in srgb, var(--vwb-accent) 12%, transparent);
+  --vwb-tint-2: color-mix(in srgb, var(--vwb-accent) 20%, transparent);
+
+  /* 面 / 线 / 态：全部映射到 Obsidian 原生变量 */
+  --vwb-surface: var(--background-secondary);
+  --vwb-surface-2: var(--background-secondary-alt, var(--background-secondary));
+  --vwb-sunken: var(--background-modifier-form-field, var(--background-primary));
+  --vwb-line: var(--background-modifier-border, var(--divider-color));
+  --vwb-line-2: var(--background-modifier-border-hover, var(--background-modifier-border));
+  --vwb-hover: var(--background-modifier-hover, var(--interactive-hover));
+  --vwb-active: var(--background-modifier-active, var(--background-modifier-hover));
+
+  /* 度量：沿用 Obsidian 的 4px 栅格与圆角档位（控件 s=4px，浮卡/浮层 m=8px） */
+  --vwb-pad: var(--size-4-3, 12px);
+  --vwb-gap: var(--size-4-3, 12px);
+  --vwb-rad: var(--radius-s, 4px);
+  --vwb-rad-pop: var(--radius-m, 8px);
+
+  /* 浮卡（学 Apex Dashboard 的味道）：底色微透壁纸、边框比背景亮一档，
+   * 让每张卡在壁纸上都有清晰轮廓。全部用原生变量 color-mix 派生，零写死色值。
+   * 无壁纸时下层也是 background-primary，视觉与实色面板几乎一样。 */
+  --vwb-card-bg: color-mix(in srgb, var(--background-primary) 68%, transparent);
+  --vwb-card-bg-hover: color-mix(in srgb, var(--background-primary) 82%, transparent);
+  --vwb-card-line: color-mix(in srgb, var(--text-normal) 12%, transparent);
+  --vwb-card-line-hover: color-mix(in srgb, var(--text-normal) 22%, transparent);
+}
+/* 浅色主题：底色更实一点（浅壁纸上透太多会发灰），边框用文字色压深 */
+.theme-light .vwb-root {
+  --vwb-card-bg: color-mix(in srgb, var(--background-primary) 86%, transparent);
+  --vwb-card-bg-hover: color-mix(in srgb, var(--background-primary) 94%, transparent);
+}
+
+/* 壁纸压暗：跟随主题 —— 深色主题压黑、浅色主题压白，不要一层写死的黑。
+ * 浮卡自带半透明底之后，压暗可以收轻一点，让壁纸多透出一些氛围。 */
+.theme-dark .vwb-root {
+  --vwb-scrim: rgb(0 0 0 / calc(0.54 + var(--vwb-dim) * 0.32));
+}
+.theme-light .vwb-root {
+  --vwb-scrim: rgb(255 255 255 / calc(0.60 + var(--vwb-dim) * 0.28));
+}
+
+/* ---------------------------------------------------------------------------
+ *  1. 布局骨架
+ * ------------------------------------------------------------------------- */
+
+/* 承接 Obsidian 的 .view-content：变成有确定高度的弹性列，防止内容把视图撑出屏幕。
+ * 这几条必须压过 Obsidian 自己的 .view-content（padding / overflow），故保留 !important。 */
+.vwb-host {
+  padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  overflow: hidden !important;
+  min-height: 0 !important;
+}
+
+.vwb-root {
+  position: relative;
+  display: flex;
+  flex: 1 1 auto;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  padding: 0;
+  background: var(--background-primary);
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+}
+
+/* 壁纸层：只铺在视图里，面板都是不透明的，所以它只从卡片之间的缝隙透出来。
+ * 「模糊」滑杆改成作用在壁纸本身（柔焦），不再做 backdrop-filter 毛玻璃。 */
+.vwb-bg {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  filter: blur(calc(var(--vwb-blur) * 0.3));
+  transform: scale(1.05); /* 盖住模糊带来的透明边缘 */
+  transition: background 0.3s ease;
+}
+.vwb-bg::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: var(--vwb-scrim, transparent);
+}
+
+.vwb-layer {
+  position: relative;
+  z-index: 1;
+}
+
+/* 通用"面板"：以前是毛玻璃，现在就是一块原生底色的实面板 */
+.vwb-glass {
+  background: var(--vwb-surface);
+  border: 1px solid var(--vwb-line);
+  border-radius: var(--vwb-rad);
+  box-shadow: none;
+}
+
+/* ---------------------------------------------------------------------------
+ *  2. 左侧库导航（权重最高：用 Obsidian 自己的 nav-item 变量）
+ * ------------------------------------------------------------------------- */
+.vwb-rail {
+  width: 184px;
+  flex: 0 0 184px;
+  padding: var(--vwb-pad);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1, 2px);
+  background: var(--vwb-surface);
+  border-right: var(--divider-width, 1px) solid var(--divider-color);
+  overflow-y: auto;
+  transition: width 0.16s ease, flex-basis 0.16s ease;
+}
+.vwb-rail.is-collapsed {
+  width: 52px;
+  flex: 0 0 52px;
+  padding: var(--vwb-pad) var(--size-4-1, 4px);
+  align-items: center;
+}
+.vwb-rail h4 {
+  margin: 0 0 var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  font-weight: 400;
+  letter-spacing: 0.06em;
+}
+.vwb-rail-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1, 4px);
+  margin-bottom: var(--size-4-2, 8px);
+}
+.vwb-rail-head h4 {
+  margin: 0;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 展开 / 收缩：贴着导航的次级按钮，不该抢标题的注意力 */
+.vwb-rail-tg {
+  flex: 0 0 auto;
+  font-size: var(--font-ui-smaller);
+  padding: 1px var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  color: var(--text-faint);
+  border: 1px solid transparent;
+  background: transparent;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-rail-tg:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.is-collapsed .vwb-rail-head h4,
+.is-collapsed .vwb-vault-name,
+.is-collapsed .vwb-badge,
+.is-collapsed .vwb-mini-tx,
+.is-collapsed .vwb-cnt {
+  display: none;
+}
+.is-collapsed .vwb-rail-tg {
+  font-size: 0;
+  padding: var(--size-4-1, 4px);
+  border: 0;
+}
+.is-collapsed .vwb-rail-tg::before {
+  content: '⤢';
+  font-size: var(--font-ui-small);
+}
+.is-collapsed .vwb-rail-head {
+  margin-bottom: var(--size-4-1, 4px);
+}
+.vwb-rail-ic {
+  font-size: var(--font-ui-large);
+  color: var(--text-faint);
+  padding: var(--size-4-2, 8px) 0;
+  cursor: default;
+}
+.is-collapsed .vwb-vault {
+  padding: var(--size-4-2, 8px) 0;
+  justify-content: center;
+  width: 100%;
+}
+.is-collapsed .vwb-rail-foot {
+  width: 100%;
+}
+.is-collapsed .vwb-mini {
+  justify-content: center;
+  padding: var(--size-4-2, 8px) 0;
+}
+
+/* 库条目 —— 直接对齐 Obsidian 文件树的手感 */
+.vwb-vault {
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  border: 1px solid transparent;
+  color: var(--nav-item-color, var(--text-muted));
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.vwb-vault:hover {
+  background: var(--nav-item-background-hover, var(--vwb-hover));
+  color: var(--nav-item-color-hover, var(--text-normal));
+}
+.vwb-vault.is-on {
+  background: var(--nav-item-background-active, var(--vwb-active));
+  color: var(--nav-item-color-active, var(--text-normal));
+  font-weight: var(--nav-item-weight-active, 500);
+}
+.vwb-dot {
+  width: var(--size-4-2, 8px);
+  height: var(--size-4-2, 8px);
+  border-radius: 50%;
+  flex: 0 0 var(--size-4-2, 8px);
+}
+.vwb-vault-name {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-ui-small);
+}
+.vwb-cnt {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+/* 状态牌：「当前」「文件夹」「未装 / 旧版」，改成方形小标，不再用胶囊 */
+.vwb-badge {
+  font-size: var(--font-ui-smaller);
+  padding: 0 var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  background: var(--vwb-hover);
+  border: 1px solid var(--vwb-line);
+  color: var(--text-faint);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.vwb-badge.is-warn {
+  color: var(--text-warning, var(--text-accent));
+  border-color: var(--vwb-line-2);
+}
+.vwb-rail-tip {
+  margin-top: var(--size-4-1, 2px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  cursor: default;
+}
+.vwb-rail-foot {
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1, 4px);
+  padding-top: var(--size-4-3, 12px);
+}
+/* 底部两个入口：设置 / 重新发现 */
+.vwb-mini {
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-smaller);
+  color: var(--nav-item-color, var(--text-muted));
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1, 4px);
+  min-width: 0;
+}
+.vwb-mini-ic {
+  flex: 0 0 auto;
+  font-size: var(--font-ui-small);
+  opacity: 0.9;
+}
+.vwb-mini-tx {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-mini:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-mini.is-on {
+  color: var(--text-normal);
+  background: var(--vwb-tint-2);
+  border-color: var(--vwb-line-2);
+}
+
+/* ---------------------------------------------------------------------------
+ *  3. 主区顶栏 + 搜索（权重第二：整个视图唯一有"输入框"存在感的地方）
+ * ------------------------------------------------------------------------- */
+.vwb-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.vwb-topbar {
+  flex: 0 0 auto;
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  align-items: center;
+  padding: var(--size-4-2, 8px) var(--vwb-pad);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+  background: var(--background-primary);
+}
+.vwb-search {
+  flex: 1;
+  min-width: 0;
+  height: var(--input-height, 30px);
+  display: flex;
+  align-items: center;
+  background: var(--vwb-sunken);
+  /* 常态不描边：整个视图只有「聚焦的搜索框」有边框存在感，
+   * 避免满屏都是「带边框的框」的 AI 模板味 */
+  border: 1px solid transparent;
+  border-radius: var(--vwb-rad);
+  padding: 0 var(--size-4-2, 8px);
+  transition: border-color 0.12s ease, box-shadow 0.12s ease, background-color 0.12s ease;
+}
+.vwb-search:hover {
+  border-color: var(--vwb-line);
+}
+.vwb-search:focus-within {
+  background: var(--background-primary);
+  border-color: var(--vwb-accent);
+  box-shadow: 0 0 0 2px var(--vwb-tint);
+}
+.vwb-search input {
+  flex: 1;
+  min-width: 0;
+  background: transparent;
+  border: 0;
+  outline: 0;
+  color: var(--text-normal);
+  font-size: var(--font-ui-small);
+  font-family: inherit;
+  padding: 0;
+  box-shadow: none;
+}
+.vwb-search input::placeholder {
+  color: var(--text-faint);
+}
+/* 搜索框清空按钮 */
+.vwb-search-x {
+  display: none;
+  flex: 0 0 auto;
+  cursor: pointer;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  line-height: 1;
+  padding: var(--size-4-1, 4px) var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-search-x.is-on {
+  display: block;
+}
+.vwb-search-x:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+
+/* ---------------------------------------------------------------------------
+ *  4. 按钮（幽灵按钮为主，只有「＋ 新建」是实心的 CTA）
+ * ------------------------------------------------------------------------- */
+.vwb-btn {
+  background: var(--interactive-normal, transparent);
+  border: 1px solid var(--vwb-line);
+  color: var(--text-muted);
+  border-radius: var(--vwb-rad);
+  padding: var(--size-4-1, 4px) var(--size-4-3, 12px);
+  min-height: var(--input-height, 30px);
+  font-size: var(--font-ui-smaller);
+  font-family: inherit;
+  cursor: pointer;
+  white-space: nowrap;
+  line-height: 1.4;
+  transition: background-color 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+}
+.vwb-btn:hover {
+  background: var(--interactive-hover, var(--vwb-hover));
+  color: var(--text-normal);
+  border-color: var(--vwb-line-2);
+}
+.vwb-btn-pri {
+  background: var(--vwb-accent);
+  border-color: var(--vwb-accent);
+  color: var(--text-on-accent); /* 变量缺失时按 CSS 规则回落到继承色，不会变成白底白字 */
+  font-weight: 500;
+}
+.vwb-btn-pri:hover {
+  background: var(--interactive-accent-hover, var(--vwb-accent));
+  border-color: var(--interactive-accent-hover, var(--vwb-accent));
+  color: var(--text-on-accent);
+}
+.vwb-btn-sm {
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  min-height: 0;
+  font-size: var(--font-ui-smaller);
+}
+.vwb-btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+.vwb-btn:disabled:hover {
+  background: var(--interactive-normal, transparent);
+  color: var(--text-muted);
+  border-color: var(--vwb-line);
+}
+/* 不可逆操作：红底**白字** —— 之前用 --text-error（红字）配红底，红底红字直接隐身 */
+.vwb-btn.is-danger {
+  background: var(--background-modifier-error, var(--vwb-hover));
+  border-color: var(--background-modifier-error, var(--vwb-line-2));
+  color: var(--text-on-accent);
+  font-weight: 500;
+}
+.vwb-btn.is-danger:hover {
+  background: var(--background-modifier-error-hover, var(--background-modifier-error));
+  color: var(--text-on-accent);
+}
+
+/* ---------------------------------------------------------------------------
+ *  5. 内容行：文件区 + 预览面板并排，各自滚动
+ * ------------------------------------------------------------------------- */
+.vwb-content {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  flex-direction: row;
+  position: relative;
+  overflow: hidden;
+}
+.vwb-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  /* 外圈留白（内边距）与内容块之间的空气（下级元素自己的 margin）分开管：
+   * 这里只管「视图边缘的呼吸」，块与块之间的节奏在 stats / bar / grid 各自的 margin 里 */
+  padding: var(--size-4-5, 20px) var(--size-4-4, 16px) var(--size-4-12, 48px);
+}
+.vwb-area {
+  min-width: 0;
+  /* 撑满 body 的高度：底部那片空白也归 areaEl 管，
+   * 这样右键 / 框选在整片空白都有效（之前网格下方右键无反应就是这个原因） */
+  min-height: 100%;
+  box-sizing: border-box;
+}
+/* 仪表盘：四个可点击的概览卡片（等宽，窄屏自动折行） */
+.vwb-dash-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1, 2px);
+  padding: var(--size-4-3, 12px) var(--size-4-4, 16px);
+  cursor: pointer;
+  border: 1px solid var(--vwb-card-line);
+  border-radius: var(--radius-m, 8px);
+  background: var(--vwb-card-bg);
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+.vwb-dash-card:hover {
+  background: var(--vwb-card-bg-hover);
+  border-color: var(--vwb-accent);
+}
+/* 卡片上的数字与副标题（覆盖轻指标时代的样式） */
+.vwb-dash-card .vwb-stat-v {
+  margin-top: 0;
+  font-size: var(--font-ui-large);
+  font-weight: 500;
+}
+.vwb-dash-card .vwb-stat-k {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+.vwb-dash-card .vwb-stat-d {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  line-height: 1.4;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-dash-card.is-unset .vwb-stat-v {
+  color: var(--text-faint);
+  font-size: var(--font-ui-medium, var(--font-ui-small));
+}
+/* 已选标签提示条 */
+.vwb-tagbar {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  flex-wrap: wrap;
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  margin-bottom: var(--vwb-gap);
+}
+.vwb-tagbar-t {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+.vwb-tagbar-x {
+  margin-left: auto;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0 var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+}
+.vwb-tagbar-x:hover {
+  color: var(--text-error);
+  background: var(--vwb-hover);
+}
+/* 标签列表面板 */
+.vwb-tagpanel {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2, 8px);
+}
+.vwb-tagpanel-hd {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+}
+.vwb-tagpanel-t {
+  font-size: var(--font-ui-small);
+  font-weight: 500;
+  color: var(--text-normal);
+}
+.vwb-tagpanel-sort {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+.vwb-tagpanel-x {
+  margin-left: auto;
+  cursor: pointer;
+  color: var(--text-faint);
+  padding: 0 var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+}
+.vwb-tagpanel-x:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-tagpanel-search {
+  max-width: 320px;
+}
+.vwb-tagpanel-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1, 2px);
+}
+.vwb-tagrow {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  border-radius: var(--vwb-rad);
+  cursor: pointer;
+  color: var(--nav-item-color, var(--text-muted));
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.vwb-tagrow:hover {
+  background: var(--vwb-hover);
+  color: var(--nav-item-color-hover, var(--text-normal));
+}
+.vwb-tagrow.is-on {
+  background: var(--vwb-tint);
+  color: var(--text-normal);
+}
+.vwb-tagrow-n {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--font-ui-small);
+}
+.vwb-tagrow-c {
+  flex: 0 0 auto;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+
+/* 文件名后缀：浅色弱化 */
+.vwb-nm-ext {
+  color: var(--text-faint);
+  font-weight: 400;
+}
+/* 卡片内容摘要：两行截断 */
+.vwb-card-sum {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  line-height: 1.5;
+  margin-top: var(--size-4-1, 4px);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* 卡片上的标签 chips（可点击 = 按标签筛选） */
+.vwb-card-tag {
+  background: var(--vwb-tint);
+  color: var(--vwb-accent);
+  border-radius: var(--vwb-rad);
+  padding: 0 var(--size-4-1, 4px);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.6;
+  white-space: nowrap;
+}
+.vwb-card-tag[title] {
+  cursor: pointer;
+}
+.vwb-card-tag[title]:hover {
+  background: var(--vwb-tint-2);
+}
+/* 预览面板 meta 行里的标签 chips */
+.vwb-prev-m .vwb-tag-click {
+  margin-left: var(--size-4-1, 4px);
+}
+/* 文件夹卡：右上角计数小字 */
+.vwb-card-cnt {
+  margin-left: auto;
+  font-size: var(--font-ui-smaller);
+  font-weight: 400;
+  color: var(--text-faint);
+  white-space: nowrap;
+}
+/* 文件夹卡：最近一篇 + 活跃度条 */
+.vwb-card-latest {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-folder-act {
+  height: 3px;
+  border-radius: 2px;
+  background: var(--vwb-hover);
+  margin-top: var(--size-4-1, 4px);
+  overflow: hidden;
+}
+.vwb-folder-act i {
+  display: block;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--vwb-accent);
+}
+/* 预览面板的文件名：可点击重命名 */
+.vwb-prev-t {
+  cursor: pointer;
+}
+.vwb-prev-t:hover {
+  color: var(--text-accent);
+  text-decoration: underline;
+}
+
+/* ---------------------------------------------------------------------------
+ *  6. 统计卡片（权重最低：去卡片化，只留一行轻指标）
+ *  间距节奏：stats 之下留 20px 空气给工具条，工具条之下再留 16px 给网格 ——
+ *  三段距离依次收紧，形成「总览 → 操作 → 内容」的从属感。
+ * ------------------------------------------------------------------------- */
+.vwb-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--size-4-8, 32px);
+  padding: var(--size-4-1, 4px) var(--size-4-1, 4px) var(--size-4-2, 8px);
+  margin-bottom: var(--size-4-5, 20px);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+}
+/* JS 给每张卡都带了 .vwb-glass，这里把它抹平 —— 统计不该有"卡片"存在感 */
+.vwb-stat.vwb-glass {
+  background: transparent;
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+  padding: 0;
+}
+.vwb-stat-k {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+.vwb-stat-v {
+  font-size: var(--font-ui-large);
+  font-weight: 500;
+  color: var(--text-normal);
+  margin-top: var(--size-4-1, 2px);
+  line-height: 1.2;
+  font-variant-numeric: tabular-nums; /* 数字等宽：四列数值纵向对齐，扫读不跳 */
+}
+.vwb-stat-warn .vwb-stat-v {
+  color: var(--text-warning, var(--text-normal));
+}
+
+/* ---------------------------------------------------------------------------
+ *  7. 工具条：前进后退 / 面包屑 / 视图切换 / 打开方式
+ * ------------------------------------------------------------------------- */
+.vwb-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  margin-bottom: var(--size-4-4, 16px);
+  flex-wrap: wrap;
+}
+.vwb-crumb {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  margin-right: var(--size-4-1, 4px);
+  min-width: 0;
+}
+.vwb-crumb i {
+  color: var(--text-faint);
+  font-style: normal;
+  margin: 0 var(--size-4-1, 4px);
+}
+/* 面包屑每一段都可点击回退 */
+.vwb-crumb-p {
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 1px var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  transition: color 0.12s ease, background-color 0.12s ease;
+  max-width: 220px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-crumb-p:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-crumb-p.is-cur {
+  color: var(--text-normal);
+  font-weight: 500;
+  cursor: default;
+}
+.vwb-crumb-p.is-cur:hover {
+  background: transparent;
+}
+.vwb-crumb-up {
+  cursor: pointer;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  border: 1px solid var(--vwb-line);
+  background: transparent;
+  transition: color 0.12s ease, background-color 0.12s ease;
+  white-space: nowrap;
+}
+.vwb-crumb-up:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+/* 分段控件：网格 / 列表 / 搜索范围 */
+.vwb-tab {
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  cursor: pointer;
+  border: 1px solid transparent;
+  background: transparent;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-tab:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-tab.is-on {
+  background: var(--vwb-active);
+  color: var(--text-normal);
+  border-color: var(--vwb-line);
+}
+/* 「打开方式切换」是个下拉触发器，常态不该显示成"已选中" */
+.vwb-openmode .vwb-menu-btn.is-on {
+  background: transparent;
+  border-color: transparent;
+  color: var(--text-muted);
+}
+.vwb-openmode .vwb-menu-btn.is-on:hover {
+  background: var(--vwb-hover);
+  color: var(--text-normal);
+}
+.vwb-spacer {
+  flex: 1;
+}
+.vwb-body select {
+  background: var(--vwb-sunken);
+  border: 1px solid var(--vwb-line);
+  color: var(--text-normal);
+  border-radius: var(--vwb-rad);
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  font-family: inherit;
+  min-height: var(--input-height, 30px);
+}
+.vwb-body select:hover {
+  border-color: var(--vwb-line-2);
+}
+
+/* ---------------------------------------------------------------------------
+ *  8. 笔记卡片 / 列表行（权重第三：实面板 + 细边框，hover 只换底色不位移）
+ * ------------------------------------------------------------------------- */
+.vwb-grid {
+  display: grid;
+  gap: var(--size-4-4, 16px); /* 浮卡之间要留空气，壁纸从缝隙透出来才"浮" */
+}
+.vwb-grid.tight {
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+}
+.vwb-grid.comfy {
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+}
+.vwb-grid.loose {
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+}
+/* 文件夹区与笔记区之间要隔开一大步（≈24px）：12px 的间隙会让两种卡片
+ * 看起来是同一批。JS 渲染时写了 inline marginTop:12px，样式层只能
+ * 用 !important 抬高 —— 全文件仅 .vwb-host 与此处两处用 !important。 */
+.vwb-grid.vwb-mt {
+  margin-top: var(--size-4-6, 24px) !important;
+}
+.vwb-card {
+  padding: var(--size-4-3, 12px);
+  cursor: pointer;
+  position: relative;
+  /* 浮卡：底色微透壁纸 + 一条"亮一档"的细边框勾出轮廓（学 Apex Dashboard）。
+   * 覆盖 .vwb-glass 的实色底 —— 本规则在 .vwb-glass 之后，同级后赢。 */
+  background: var(--vwb-card-bg);
+  border-color: var(--vwb-card-line);
+  border-radius: var(--radius-m, 8px);
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+.vwb-card:hover {
+  background: var(--vwb-card-bg-hover);
+  border-color: var(--vwb-card-line-hover);
+}
+/* 选中：accent 勾边 + 底色向 accent 偏一点（实色，保证压壁纸时可读） */
+.vwb-card.is-sel {
+  border-color: var(--vwb-accent);
+  background: color-mix(in srgb, var(--vwb-accent) 14%, var(--background-primary));
+}
+/* 智能视图弹层 */
+.vwb-views {
+  position: absolute;
+  z-index: 60;
+  min-width: 240px;
+  max-width: 320px;
+  padding: var(--size-4-3, 12px);
+  border-radius: var(--radius-m, 8px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2, 8px);
+}
+.vwb-views-t {
+  font-size: var(--font-ui-small);
+  font-weight: 600;
+  color: var(--text-normal);
+}
+.vwb-views-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1, 4px);
+  max-height: 260px;
+  overflow-y: auto;
+}
+.vwb-views-empty {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  padding: var(--size-4-2, 8px) 0;
+}
+.vwb-views-i {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  border-radius: var(--vwb-rad);
+  cursor: pointer;
+  border: 1px solid var(--vwb-card-line);
+  background: var(--vwb-card-bg);
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+.vwb-views-i:hover {
+  background: var(--vwb-card-bg-hover);
+  border-color: var(--vwb-card-line-hover);
+}
+.vwb-views-d {
+  flex: 1;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  text-align: right;
+}
+.vwb-views-x {
+  flex: 0 0 auto;
+  color: var(--text-faint);
+  padding: 0 var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+}
+.vwb-views-x:hover {
+  color: var(--text-error);
+  background: var(--vwb-hover);
+}
+.vwb-views-f {
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  justify-content: flex-end;
+}
+/* 批量重命名弹层里的模式选择行 */
+.vwb-dlg-modes {
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  margin-bottom: var(--size-4-2, 8px);
+}
+
+/* 拖拽：投放目标的文件夹高亮 */
+.vwb-card.is-dragover,
+.vwb-row.is-dragover {
+  border-color: var(--vwb-accent);
+  background: var(--vwb-tint-2);
+}
+/* 拖拽进行中时，可拖的条目给 move 光标 */
+.vwb-card[draggable="true"],
+.vwb-row[draggable="true"] {
+  cursor: grab;
+}
+.vwb-card[draggable="true"]:active,
+.vwb-row[draggable="true"]:active {
+  cursor: grabbing;
+}
+/* ---------- 卡片差异化：三种卡不是一个模子 ----------
+ * 文件夹卡 = 分区入口：比笔记卡**轻一档** —— 底色透得多一半、边框同款。
+ * 不能全透明（壁纸上文字直接压壁纸，穿帮过），也不能和笔记卡一样实。 */
+.vwb-card:has(.vwb-folder) {
+  background: color-mix(in srgb, var(--vwb-card-bg) 55%, transparent);
+  border-color: var(--vwb-card-line);
+}
+.vwb-card:has(.vwb-folder):hover {
+  background: var(--vwb-card-bg);
+  border-color: var(--vwb-card-line-hover);
+}
+.vwb-card:has(.vwb-folder):hover .vwb-folder {
+  color: var(--nav-item-color-hover, var(--text-normal));
+}
+/* 选中态要赢过文件夹卡的淡化底（同权重，靠源顺序后置覆盖） */
+.vwb-card.is-sel {
+  border-color: var(--vwb-accent);
+  background: color-mix(in srgb, var(--vwb-accent) 14%, var(--background-primary));
+}
+/* 图片卡 = 缩略图主导（重图轻框）：图片顶格贴边，框的存在感降到最低 */
+.vwb-card:has(.vwb-card-thumb) {
+  padding-top: 0;
+  overflow: hidden;
+}
+.vwb-card:has(.vwb-card-thumb) .vwb-card-thumb {
+  margin-left: calc(var(--size-4-3, 12px) * -1);
+  margin-right: calc(var(--size-4-3, 12px) * -1);
+  border-radius: 0;
+}
+.vwb-card-nm {
+  font-size: var(--font-ui-small);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1, 4px);
+  min-width: 0;
+}
+.vwb-ico {
+  flex: 0 0 auto;
+  font-size: var(--font-ui-small);
+  line-height: 1;
+}
+.vwb-nm-t {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+/* 图片卡片的缩略图 */
+.vwb-card-thumb {
+  height: 88px;
+  margin: 0 0 var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  overflow: hidden;
+  background: var(--vwb-surface-2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.vwb-card-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.vwb-card-thumb span {
+  font-size: var(--font-ui-large);
+  color: var(--text-faint);
+}
+.vwb-card-mt {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  margin-top: var(--size-4-1, 4px);
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  align-items: center;
+}
+/* 文件夹名不用特殊色，改用字重区分 */
+.vwb-folder {
+  font-weight: 500;
+  color: var(--nav-item-color, var(--text-normal));
+}
+/* 列表模式：文件夹前面的展开箭头（点它就地看里面有什么，点名字才进下一级） */
+.vwb-caret {
+  flex: 0 0 auto;
+  width: var(--size-4-4, 16px);
+  text-align: center;
+  font-size: var(--font-ui-smaller);
+  line-height: 1;
+  color: var(--text-faint);
+  border-radius: var(--vwb-rad);
+  padding: var(--size-4-1, 2px) 0;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-caret:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-caret.is-open {
+  color: var(--vwb-accent);
+}
+.vwb-tag {
+  color: var(--text-accent);
+}
+/* 列表行：贴近文件树 —— 常态无边框无底色，hover 才浮起来 */
+.vwb-row.vwb-glass {
+  background: transparent;
+  border: 0;
+  border-radius: var(--vwb-rad);
+}
+.vwb-row {
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  align-items: center;
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  cursor: pointer;
+  margin-bottom: var(--size-4-1, 4px);
+  color: var(--nav-item-color, var(--text-muted));
+  transition: background-color 0.12s ease, color 0.12s ease;
+}
+.vwb-row:hover {
+  background: var(--vwb-hover);
+  color: var(--nav-item-color-hover, var(--text-normal));
+}
+.vwb-row.is-sel {
+  background: var(--vwb-active);
+  color: var(--nav-item-color-active, var(--text-normal));
+}
+.vwb-row-nm {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-row-mt {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  flex: 0 0 auto;
+  min-width: 130px;
+  text-align: right;
+  white-space: nowrap;
+}
+/* 展开出来的子层：矮一点，看得出是从属关系 */
+.vwb-row.is-child {
+  padding-top: var(--size-4-1, 4px);
+  padding-bottom: var(--size-4-1, 4px);
+  margin-bottom: var(--size-4-1, 2px);
+}
+.vwb-empty {
+  text-align: center;
+  color: var(--text-faint);
+  padding: var(--size-4-12, 48px) 0;
+}
+
+/* 空文件夹：压一点亮度，和「有笔记的文件夹」区分开 */
+.vwb-card.is-empty,
+.vwb-row.is-empty {
+  opacity: 0.7;
+}
+.vwb-card.is-empty .vwb-card-mt,
+.vwb-row.is-empty .vwb-row-mt {
+  color: var(--text-faint);
+}
+/* 列表模式展开空文件夹时的那行说明 */
+.vwb-row-tip {
+  padding: var(--size-4-1, 4px) var(--size-4-3, 12px) var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+
+/* 卡片 / 列表行的「只看一眼」眼睛按钮 */
+.vwb-card-eye {
+  position: absolute;
+  top: var(--size-4-2, 8px);
+  right: var(--size-4-2, 8px);
+  width: var(--size-4-5, 20px);
+  height: var(--size-4-5, 20px);
+  border-radius: var(--vwb-rad);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--font-ui-smaller);
+  line-height: 1;
+  color: var(--text-faint);
+  background: var(--vwb-surface);
+  border: 1px solid var(--vwb-line);
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.12s ease, color 0.12s ease, border-color 0.12s ease;
+  z-index: 3;
+}
+.vwb-card:hover .vwb-card-eye,
+.vwb-card-eye:hover {
+  opacity: 1;
+}
+.vwb-card-eye:hover {
+  color: var(--text-normal);
+  border-color: var(--vwb-accent);
+}
+.vwb-row .vwb-card-eye {
+  position: static;
+  transform: none;
+  flex: 0 0 auto;
+  opacity: 0.45;
+  background: transparent;
+  border-color: transparent;
+}
+.vwb-row:hover .vwb-card-eye {
+  opacity: 1;
+}
+
+/* ---------------------------------------------------------------------------
+ *  9. 打开方式切换（下拉菜单）
+ * ------------------------------------------------------------------------- */
+.vwb-openmode,
+.vwb-menu,
+.vwb-newmenu {
+  position: relative;
+}
+.vwb-menu-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--size-4-1, 4px);
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+}
+.vwb-menu-btn-t {
+  font-size: var(--font-ui-smaller);
+}
+.vwb-menu-btn-cur {
+  font-size: var(--font-ui-smaller);
+  padding: 0 var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  background: var(--vwb-tint-2);
+  color: var(--text-normal);
+  white-space: nowrap;
+}
+.vwb-menu-caret {
+  font-size: var(--font-ui-smaller);
+  opacity: 0.7;
+}
+.vwb-menu-pop {
+  display: none;
+  position: absolute;
+  top: calc(100% + var(--size-4-1, 4px));
+  left: 0;
+  z-index: 60;
+  width: 306px;
+  max-width: 78vw;
+  padding: var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad-pop);
+  border: 1px solid var(--vwb-line-2);
+  background: var(--background-primary);
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-menu-pop.is-on {
+  display: block;
+}
+.vwb-menu-i {
+  padding: var(--size-4-2, 8px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.vwb-menu-i:hover {
+  background: var(--vwb-hover);
+}
+.vwb-menu-i.is-on {
+  background: var(--vwb-active);
+}
+.vwb-menu-i-hd {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1, 4px);
+}
+.vwb-menu-i-nm {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+}
+.vwb-menu-i-ck {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-accent);
+}
+.vwb-menu-i-ds {
+  margin-top: var(--size-4-1, 2px);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+/* 「＋ 新建」下拉：贴按钮右边缘展开（工具条右半边，左对齐会冲出主区）；
+ * 主区太窄时由 placeNewMenu() 再往左夹。 */
+.vwb-newmenu-pop {
+  left: auto;
+  right: 0;
+  width: 268px;
+  max-width: none;
+  z-index: 70;
+}
+.vwb-newmenu-pop.is-on {
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-newmenu-pop .vwb-newmenu-hd {
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px) var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+  margin-bottom: var(--size-4-1, 4px);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------------------
+ *  10. 目录前进 / 后退
+ * ------------------------------------------------------------------------- */
+.vwb-nav {
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-small);
+  color: var(--text-muted);
+  cursor: pointer;
+  border: 1px solid transparent;
+  user-select: none;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-nav:hover {
+  background: var(--vwb-hover);
+  color: var(--text-normal);
+}
+.vwb-nav.is-off {
+  opacity: 0.35;
+  cursor: default;
+}
+.vwb-nav.is-off:hover {
+  background: transparent;
+  color: var(--text-muted);
+}
+
+/* ---------------------------------------------------------------------------
+ *  11. 预览面板
+ * ------------------------------------------------------------------------- */
+.vwb-prev {
+  width: 320px;
+  flex: 0 0 320px;
+  display: none;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
+  /* 侧栏是"次级面板"，用底色区分即可，不再加玻璃层 */
+  background: var(--vwb-surface);
+  border-left: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-prev.vwb-glass {
+  border-radius: 0;
+  border-top: 0;
+  border-right: 0;
+  border-bottom: 0;
+}
+.vwb-prev.is-on {
+  display: flex;
+}
+.vwb-prev.float {
+  position: absolute;
+  right: var(--vwb-pad);
+  top: var(--vwb-pad);
+  bottom: var(--vwb-pad);
+  width: 360px;
+  flex: none;
+  border: 1px solid var(--vwb-line-2);
+  border-radius: var(--vwb-rad-pop);
+  z-index: 15;
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-prev.bottom {
+  position: absolute;
+  left: var(--vwb-pad);
+  right: var(--vwb-pad);
+  bottom: var(--vwb-pad);
+  top: auto;
+  width: auto;
+  height: 46%;
+  flex: none;
+  border: 1px solid var(--vwb-line-2);
+  border-radius: var(--vwb-rad-pop);
+  z-index: 15;
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-prev-head {
+  flex: 0 0 auto;
+  padding: var(--size-4-3, 12px);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+  display: flex;
+  align-items: flex-start;
+  gap: var(--size-4-2, 8px);
+}
+.vwb-prev-tools {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1, 4px);
+}
+.vwb-prev-hd-txt {
+  flex: 1;
+  min-width: 0;
+}
+.vwb-prev-t {
+  font-size: var(--font-ui-medium);
+  font-weight: 500;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-prev-m {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  margin-top: var(--size-4-1, 2px);
+  word-break: break-all;
+}
+/* 预览头部的小图标按钮（关闭 / 大纲 / 铺满 / 编辑） */
+.vwb-prev-x {
+  flex: 0 0 auto;
+  cursor: pointer;
+  color: var(--text-faint);
+  font-size: var(--font-ui-smaller);
+  line-height: 1;
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  min-height: var(--size-4-6, 24px);
+  min-width: var(--size-4-6, 24px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--vwb-rad);
+  border: 1px solid transparent;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-prev-x:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-prev-body {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  overflow-x: hidden;
+  padding: var(--size-4-4, 16px);
+  font-size: var(--font-ui-small);
+  line-height: 1.7;
+  word-break: break-word;
+}
+/* 铺满模式：覆盖整个内容行，用阅读视图的排版 */
+.vwb-prev.is-max {
+  position: absolute;
+  inset: 0;
+  width: auto;
+  flex: none;
+  z-index: 20;
+  border: 0;
+  border-radius: 0;
+  background: var(--background-primary);
+}
+.vwb-prev.is-max .vwb-prev-head,
+.vwb-prev.is-max .vwb-prev-foot {
+  padding-left: var(--size-4-8, 32px);
+  padding-right: var(--size-4-8, 32px);
+}
+.vwb-prev-body.vwb-doc {
+  padding: var(--size-4-4, 16px) var(--size-4-5, 20px) var(--size-4-12, 48px);
+  min-width: 0;
+}
+.vwb-prev.is-max .vwb-prev-body.vwb-doc {
+  padding: var(--size-4-8, 32px) var(--size-4-10, 40px) var(--size-4-12, 48px);
+  font-size: var(--font-ui-medium);
+  line-height: 1.8;
+}
+.vwb-prev.is-max .vwb-prev-body:not(.is-editing) .vwb-doc-inner {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.vwb-prev.is-max .vwb-prev-t {
+  font-size: var(--font-ui-large);
+}
+/* 铺满时按阅读视图的标题层级（用主题自带的尺寸变量，跟主题走） */
+.vwb-prev.is-max .vwb-prev-body h1 { font-size: var(--h1-size, 1.8em); margin: 0.9em 0 0.5em; }
+.vwb-prev.is-max .vwb-prev-body h2 { font-size: var(--h2-size, 1.5em); margin: 0.85em 0 0.45em; }
+.vwb-prev.is-max .vwb-prev-body h3 { font-size: var(--h3-size, 1.3em); margin: 0.8em 0 0.4em; }
+.vwb-prev.is-max .vwb-prev-body h4 { font-size: var(--h4-size, 1.15em); margin: 0.75em 0 0.35em; }
+.vwb-prev.is-max .vwb-prev-body p { margin: 0.6em 0; }
+.vwb-prev.is-max .vwb-prev-body li { margin: 0.2em 0; }
+.vwb-prev.is-max .vwb-fcard,
+.vwb-prev.is-max .vwb-code {
+  max-width: 820px;
+  margin: 0 auto;
+}
+.vwb-prev.is-max .vwb-media-image {
+  max-height: calc(100vh - 190px);
+}
+.vwb-prev-body h1,
+.vwb-prev-body h2 {
+  font-size: 1.15em;
+  margin: 0.8em 0 0.4em;
+}
+.vwb-prev-body h3 {
+  font-size: 1.05em;
+  margin: 0.7em 0 0.35em;
+}
+.vwb-prev-foot {
+  flex: 0 0 auto;
+  padding: var(--size-4-3, 12px);
+  border-top: var(--divider-width, 1px) solid var(--divider-color);
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  flex-wrap: wrap;
+}
+
+/* ---------------------------------------------------------------------------
+ *  12. 大纲抽屉：与正文并排
+ * ------------------------------------------------------------------------- */
+.vwb-prev-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: row;
+  overflow: hidden;
+}
+.vwb-outline.vwb-glass {
+  background: var(--vwb-surface-2);
+  border-radius: 0;
+  border: 0;
+  border-left: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-outline {
+  flex: 0 0 212px;
+  width: 212px;
+  z-index: 12;
+  display: none;
+  flex-direction: column;
+  overflow: auto;
+  padding: var(--size-4-3, 12px) var(--size-4-2, 8px) var(--size-4-5, 20px);
+}
+.vwb-outline.is-on {
+  display: flex;
+}
+.vwb-outline-head {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  padding-bottom: var(--size-4-2, 8px);
+  margin-bottom: var(--size-4-1, 4px);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-outline-t {
+  flex: 1;
+  font-size: var(--font-ui-smaller);
+  font-weight: 500;
+  color: var(--text-normal);
+}
+.vwb-outline-empty {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  padding: var(--size-4-2, 8px) var(--size-4-1, 2px);
+  line-height: 1.7;
+}
+.vwb-outline-i {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.vwb-outline-i:hover {
+  background: var(--vwb-hover);
+}
+.vwb-outline-lv {
+  flex: 0 0 auto;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+.vwb-outline-tx {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+.vwb-outline-i.lv1 .vwb-outline-tx { color: var(--text-normal); font-weight: 500; }
+.vwb-outline-i.lv2 .vwb-outline-tx { padding-left: var(--size-4-1, 2px); }
+.vwb-outline-i.lv3 .vwb-outline-tx { padding-left: var(--size-4-3, 10px); }
+.vwb-outline-i.lv4 .vwb-outline-tx { padding-left: var(--size-4-4, 18px); }
+.vwb-outline-i.lv5 .vwb-outline-tx { padding-left: var(--size-4-6, 26px); }
+.vwb-outline-i.lv6 .vwb-outline-tx { padding-left: var(--size-4-8, 34px); }
+
+/* ---------------------------------------------------------------------------
+ *  13. 工作台内编辑器（三种书写方式）
+ * ------------------------------------------------------------------------- */
+.vwb-prev-body.is-editing {
+  padding: var(--size-4-3, 12px);
+  overflow: hidden;
+}
+.vwb-edit {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2, 8px);
+  height: 100%;
+  min-height: 0;
+}
+.vwb-edit-bar {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  flex-wrap: wrap;
+  padding-bottom: var(--size-4-2, 8px);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-edit-t {
+  flex: 0 0 auto;          /* 英文比中文长，别让它被 chips 挤掉一半 */
+  white-space: nowrap;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+.vwb-edit-hint {
+  margin-left: auto;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vwb-fmt-btn {
+  flex: 0 0 auto;
+}
+.vwb-edit-main {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+  gap: var(--size-4-3, 12px);
+}
+.vwb-editor {
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 0;
+  resize: none;
+  box-sizing: border-box;
+  border: 1px solid var(--vwb-line);
+  border-radius: var(--vwb-rad);
+  background: var(--background-primary);
+  color: var(--text-normal);
+  padding: var(--size-4-3, 12px);
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.8;
+  outline: none;
+  box-shadow: none;
+  tab-size: 2;
+}
+.vwb-live {
+  flex: 1 1 50%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: 0 var(--size-4-2, 8px) var(--size-4-10, 40px) var(--size-4-3, 12px);
+  border-left: var(--divider-width, 1px) solid var(--divider-color);
+  font-size: var(--font-ui-small);
+  line-height: 1.75;
+}
+.vwb-live .vwb-doc-inner {
+  word-break: break-word;
+}
+/* 单画布模式：源码框隐藏，正文直接呈现 */
+.vwb-edit[data-mode='live'] .vwb-editor {
+  display: none;
+}
+.vwb-edit[data-mode='source'] .vwb-editor {
+  flex: 1 1 100%;
+}
+/* 窄面板分屏排不下，只留源码 */
+.vwb-prev:not(.is-max) .vwb-live {
+  display: none;
+}
+.vwb-prev:not(.is-max) .vwb-edit[data-mode='split'] .vwb-editor {
+  flex: 1 1 100%;
+}
+
+/* ---- 单画布（即时渲染）：点哪改哪，视觉上是一整篇连续的文档 ---- */
+.vwb-canvas {
+  flex: 1 1 100%;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--size-4-1, 4px) var(--size-4-5, 20px) var(--size-4-12, 48px) var(--size-4-1, 4px);
+  font-size: var(--font-ui-small);
+  line-height: 1.8;
+  word-break: break-word;
+}
+/* 块不画"盒子"：只在鼠标划过时给一层几乎看不见的底色提示可点 */
+.vwb-blk {
+  border-radius: var(--vwb-rad);
+  padding: 0 var(--size-4-1, 2px);
+  margin: 0 calc(var(--size-4-1, 2px) * -1);
+  transition: background-color 0.12s ease;
+  cursor: text;
+}
+.vwb-blk:hover {
+  background: var(--vwb-tint);
+}
+.vwb-blk.is-editing {
+  background: transparent;
+  cursor: text;
+}
+.vwb-blk.is-blank {
+  min-height: var(--size-4-3, 14px);
+}
+/* 刚空出来、还没写字的新段落：给个高度才点得到 */
+.vwb-blk.is-pending {
+  min-height: 1.8em;
+}
+.vwb-blk.is-blank .vwb-blk-gap {
+  height: var(--size-4-3, 12px);
+}
+/* 就地编辑时的源码框：字体、字号、行距都跟着渲染样式走，
+ * 所以点进一段几乎看不出"换了个输入框"，只有 Markdown 记号浮出来。 */
+.vwb-blk-ta {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  resize: none;
+  border: 0;
+  outline: none;
+  background: transparent;
+  color: var(--text-normal);
+  font-family: var(--font-text);
+  font-size: inherit;
+  line-height: inherit;
+  padding: 0;
+  margin: 0;
+  tab-size: 2;
+  overflow: hidden;
+}
+.vwb-blk-ta::selection {
+  background: var(--text-selection, var(--vwb-tint-2));
+}
+/* 就地编辑的输入框：只给一圈细线，不要 2px 焦点环打断阅读节奏 */
+.vwb-blk-ta:focus,
+.vwb-blk-ta:focus-visible {
+  outline: 1px solid var(--vwb-line-2);
+  outline-offset: 2px;
+}
+.vwb-blk-ta.is-h1 { font-size: var(--h1-size, 1.618em); font-weight: 700; line-height: 1.28; }
+.vwb-blk-ta.is-h2 { font-size: var(--h2-size, 1.462em); font-weight: 700; line-height: 1.3; }
+.vwb-blk-ta.is-h3 { font-size: var(--h3-size, 1.318em); font-weight: 700; line-height: 1.35; }
+.vwb-blk-ta.is-h4 { font-size: var(--h4-size, 1.188em); font-weight: 700; }
+.vwb-blk-ta.is-h5 { font-size: var(--h5-size, 1.076em); font-weight: 700; }
+.vwb-blk-ta.is-h6 { font-size: var(--h6-size, 1em); font-weight: 700; }
+.vwb-blk-ta.vwb-ta-quote { color: var(--text-muted); }
+.vwb-blk-ta.vwb-ta-code,
+.vwb-blk-ta.vwb-ta-frontmatter {
+  font-family: var(--font-monospace);
+  font-size: 0.9em;
+  line-height: 1.7;
+}
+.vwb-blk > *:first-child {
+  margin-top: 0;
+}
+.vwb-blk > *:last-child {
+  margin-bottom: 0;
+}
+
+/* 阅读 / 编辑 切换按钮 */
+.vwb-docmode {
+  min-width: var(--size-4-6, 28px);
+  text-align: center;
+  white-space: nowrap;
+}
+.vwb-docmode.is-on {
+  color: var(--text-on-accent);
+  background: var(--vwb-accent);
+  border-color: var(--vwb-accent);
+}
+
+/* ---------------------------------------------------------------------------
+ *  14. 右键菜单
+ * ------------------------------------------------------------------------- */
+.vwb-ctx.vwb-glass,
+.vwb-ctx-sub.vwb-glass {
+  background: var(--background-primary);
+  border: 1px solid var(--vwb-line-2);
+  border-radius: var(--vwb-rad-pop);
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-ctx {
+  position: absolute;
+  z-index: 45;
+  min-width: 224px;
+  max-width: calc(100% - var(--size-4-3, 12px));
+  padding: var(--size-4-1, 4px);
+  font-size: var(--font-ui-small);
+  overscroll-behavior: contain;
+}
+.vwb-ctx-g + .vwb-ctx-g {
+  margin-top: var(--size-4-1, 4px);
+  padding-top: var(--size-4-1, 4px);
+  border-top: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-ctx-i {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  color: var(--text-normal);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background-color 0.12s ease;
+}
+.vwb-ctx-i:hover {
+  background: var(--vwb-hover);
+}
+/* 危险动作（删除）与「这一项当前不可用」（外部库只读等） */
+.vwb-ctx-i.is-danger {
+  color: var(--text-error);
+}
+.vwb-ctx-i.is-danger:hover {
+  background: var(--background-modifier-error, var(--vwb-hover));
+}
+.vwb-ctx-i.is-off {
+  opacity: 0.45;
+  cursor: default;
+}
+.vwb-ctx-i.is-off:hover {
+  background: transparent;
+}
+.vwb-ctx-ic {
+  width: var(--size-4-4, 16px);
+  text-align: center;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+.vwb-ctx-lb {
+  flex: 1 1 auto;
+}
+.vwb-ctx-key {
+  margin-left: var(--size-4-4, 18px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+.vwb-ctx-ar {
+  color: var(--text-faint);
+}
+.vwb-ctx-sub {
+  display: none;
+  position: absolute;
+  left: calc(100% - var(--size-4-1, 4px));
+  top: calc(var(--size-4-2, 8px) * -1);
+  min-width: 186px;
+  padding: var(--size-4-1, 4px);
+}
+.vwb-ctx-i.has-sub:hover > .vwb-ctx-sub {
+  display: block;
+}
+/* 右边展不开时，子菜单朝左开 */
+.vwb-ctx.is-flip .vwb-ctx-sub {
+  left: auto;
+  right: calc(100% - var(--size-4-1, 4px));
+}
+/* 面板太矮、主菜单要内部滚动时，子菜单改成「就地展开」，避免被裁掉点不到 */
+.vwb-ctx.is-flat .vwb-ctx-i.has-sub {
+  flex-wrap: wrap;
+}
+.vwb-ctx.is-flat .vwb-ctx-i.has-sub > .vwb-ctx-sub {
+  position: static;
+  display: none;
+  flex: 1 0 100%;
+  min-width: 0;
+  margin: var(--size-4-1, 2px) 0 var(--size-4-1, 4px) var(--size-4-6, 22px);
+  padding: 0 0 0 var(--size-4-2, 8px);
+  border: 0;
+  border-left: var(--divider-width, 1px) solid var(--divider-color);
+  border-radius: 0;
+  box-shadow: none;
+  background: transparent;
+}
+.vwb-ctx.is-flat .vwb-ctx-i.has-sub:hover > .vwb-ctx-sub {
+  display: block;
+}
+
+/* ---------------------------------------------------------------------------
+ *  15. 多类型预览：媒体 / 文本 / 文件卡
+ * ------------------------------------------------------------------------- */
+.vwb-media {
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+}
+.vwb-media-image {
+  border-radius: var(--vwb-rad);
+  overflow: hidden;
+  background: var(--vwb-surface-2);
+  border: 1px solid var(--vwb-line);
+}
+.vwb-img {
+  display: block;
+  max-width: 100%;
+  height: auto;
+  cursor: zoom-in;
+}
+.vwb-img.is-actual {
+  max-width: none;
+  cursor: zoom-out;
+}
+/* 1:1 模式：容器内可滚动，不再裁掉溢出 */
+.vwb-media-image.is-actual {
+  overflow: auto;
+  max-width: 100%;
+  cursor: zoom-out;
+}
+.vwb-media-audio {
+  padding: var(--size-4-3, 12px) 0;
+}
+.vwb-av {
+  width: 100%;
+  max-width: 100%;
+  display: block;
+}
+.vwb-media-video {
+  display: block;
+}
+.vwb-media-pdf {
+  display: block;
+  height: calc(100% - var(--size-4-12, 46px));
+  min-height: 320px;
+}
+/* 原生嵌入容器（Obsidian 自己的 PDF 阅读器塞进来） */
+.vwb-embed {
+  height: calc(100% - var(--size-4-12, 46px));
+  min-height: 320px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.vwb-embed > * {
+  flex: 1 1 auto;
+  min-height: 0;
+}
+.vwb-quick {
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  flex-wrap: wrap;
+  margin-top: var(--size-4-3, 10px);
+}
+.vwb-pdf {
+  width: 100%;
+  height: 100%;
+  min-height: 380px;
+  border: 0;
+  border-radius: var(--vwb-rad);
+  background: var(--background-primary);
+}
+.vwb-media-tip {
+  margin-top: var(--size-4-3, 11px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  line-height: 1.7;
+}
+.vwb-code {
+  margin: 0;
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.7;
+  white-space: pre-wrap;
+  word-break: break-word;
+  color: var(--text-normal);
+  background: var(--code-background, var(--vwb-surface-2));
+  border: 1px solid var(--vwb-line);
+  border-radius: var(--vwb-rad);
+  padding: var(--size-4-3, 12px);
+}
+
+/* 文件信息卡（「属性 + 用外部程序打开」） */
+.vwb-fcard {
+  border: 1px solid var(--vwb-line);
+  border-radius: var(--vwb-rad);
+  background: var(--vwb-surface-2);
+  padding: var(--size-4-3, 12px);
+}
+.vwb-fcard-top {
+  display: flex;
+  gap: var(--size-4-3, 12px);
+  align-items: flex-start;
+}
+.vwb-fcard-ico {
+  font-size: var(--font-ui-large);
+  line-height: 1;
+  flex: 0 0 auto;
+}
+.vwb-fcard-info {
+  flex: 1;
+  min-width: 0;
+}
+.vwb-fcard-nm {
+  font-size: var(--font-ui-medium);
+  font-weight: 500;
+  word-break: break-all;
+}
+.vwb-fcard-path {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  margin-top: var(--size-4-1, 2px);
+  word-break: break-all;
+  line-height: 1.5;
+}
+.vwb-fcard-rows {
+  margin-top: var(--size-4-3, 12px);
+  border: 1px solid var(--vwb-line);
+  border-radius: var(--vwb-rad);
+  overflow: hidden;
+}
+.vwb-frow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--size-4-3, 12px);
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-frow:last-child {
+  border-bottom: 0;
+}
+.vwb-frow b {
+  color: var(--text-normal);
+  font-weight: 500;
+  text-align: right;
+}
+.vwb-fcard-btns {
+  display: flex;
+  gap: var(--size-4-2, 8px);
+  flex-wrap: wrap;
+  margin-top: var(--size-4-3, 12px);
+}
+.vwb-fcard-btns .vwb-btn {
+  flex: 1 1 auto;
+  justify-content: center;
+}
+.vwb-fcard-tip {
+  margin-top: var(--size-4-3, 10px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  line-height: 1.7;
+}
+.vwb-hint {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  margin-top: var(--size-4-3, 12px);
+  line-height: 1.9;
+  white-space: pre-line;
+}
+.vwb-embed-fixed {
+  display: block;
+  max-width: 100%;
+}
+.vwb-embed-fixed .vwb-img {
+  cursor: zoom-in;
+  border-radius: var(--vwb-rad);
+}
+.vwb-embed-link {
+  color: var(--text-accent);
+  font-size: var(--font-ui-smaller);
+}
+.vwb-prev-body img {
+  max-width: 100%;
+  height: auto;
+}
+.vwb-prev-body table {
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
+}
+.vwb-prev-body pre {
+  overflow-x: auto;
+}
+/* 阅读态：正文允许像网页一样拖选复制（编辑态的 textarea 本来就支持） */
+.vwb-prev-body.vwb-doc {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* ---------------------------------------------------------------------------
+ *  16. 设置抽屉（带子页）
+ * ------------------------------------------------------------------------- */
+.vwb-drawer.vwb-glass {
+  background: var(--background-primary);
+  border-radius: 0;
+  border: 0;
+  border-left: var(--divider-width, 1px) solid var(--divider-color);
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  width: 440px;
+  z-index: 40;
+  display: none;
+  flex-direction: column;
+  overflow: hidden;
+}
+.vwb-drawer.is-on {
+  display: flex;
+}
+.vwb-drawer-head {
+  flex: 0 0 auto;
+  padding: var(--size-4-3, 12px) var(--size-4-4, 16px);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+}
+.vwb-drawer-t {
+  flex: 1;
+  font-size: var(--font-ui-medium);
+  font-weight: 500;
+}
+.vwb-drawer-wrap {
+  flex: 1 1 auto;
+  min-height: 0;
+  display: flex;
+}
+.vwb-drawer-nav {
+  flex: 0 0 104px;
+  padding: var(--size-4-3, 12px) var(--size-4-2, 8px);
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-1, 2px);
+  border-right: var(--divider-width, 1px) solid var(--divider-color);
+  overflow-y: auto;
+}
+.vwb-drawer-nav-i {
+  padding: var(--size-4-2, 8px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-smaller);
+  color: var(--nav-item-color, var(--text-muted));
+  cursor: pointer;
+  border: 1px solid transparent;
+  transition: background-color 0.12s ease, color 0.12s ease;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.vwb-drawer-nav-i:hover {
+  background: var(--vwb-hover);
+  color: var(--text-normal);
+}
+.vwb-drawer-nav-i.is-on {
+  background: var(--vwb-active);
+  color: var(--nav-item-color-active, var(--text-normal));
+  font-weight: 500;
+}
+.vwb-drawer-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--size-4-4, 16px) var(--size-4-4, 16px) var(--size-4-8, 32px);
+}
+/* 设置子页通用小块 */
+.vwb-note {
+  font-size: var(--font-ui-smaller);
+  line-height: 1.6;
+  color: var(--text-faint);
+  margin-bottom: var(--size-4-3, 10px);
+}
+.vwb-log {
+  font-size: var(--font-ui-smaller);
+  line-height: 1.6;
+  color: var(--text-muted);
+  padding: var(--size-4-1, 4px) 0;
+  border-bottom: var(--divider-width, 1px) dashed var(--vwb-line);
+  word-break: break-all;
+}
+.vwb-mode {
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  border-radius: var(--vwb-rad);
+  border: 1px solid var(--vwb-line);
+  background: var(--vwb-surface-2);
+  cursor: pointer;
+  margin-bottom: var(--size-4-2, 8px);
+  transition: border-color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-mode:hover {
+  border-color: var(--vwb-line-2);
+}
+.vwb-mode.is-on {
+  border-color: var(--vwb-accent);
+  background: var(--vwb-tint);
+}
+.vwb-mode-hd {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-1, 4px);
+}
+.vwb-mode-nm {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+}
+.vwb-mode-ck {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-accent);
+}
+.vwb-mode-ds {
+  margin-top: var(--size-4-1, 2px);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.5;
+  color: var(--text-faint);
+}
+.vwb-kv {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+  padding: var(--size-4-1, 2px) 0;
+}
+.vwb-kv kbd {
+  flex: 0 1 auto;          /* 英文键名（Enter (code block / table / front matter)）很长，允许收缩并换行 */
+  max-width: 46%;
+  white-space: normal;
+  word-break: break-word;
+  min-width: 74px;
+  text-align: center;
+  font-family: var(--font-monospace);
+  font-size: var(--font-ui-smaller);
+  padding: 1px var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  border: 1px solid var(--vwb-line-2);
+  background: var(--vwb-surface-2);
+  color: var(--text-normal);
+}
+.vwb-vrow {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-2, 8px) 0;
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-vrow.is-off {
+  opacity: 0.45;
+}
+.vwb-vrow-nm {
+  flex: 0 0 auto;
+  max-width: 40%;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-vrow-pt {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-in {
+  flex: 1;
+  min-width: 0;
+  background: var(--vwb-sunken);
+  border: 1px solid var(--vwb-line);
+  border-radius: var(--vwb-rad);
+  color: var(--text-normal);
+  font-size: var(--font-ui-smaller);
+  font-family: inherit;
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+}
+.vwb-sec {
+  margin-bottom: var(--size-4-5, 18px);
+}
+.vwb-sec > h5 {
+  margin: 0 0 var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  font-weight: 400;
+  letter-spacing: 0.04em;
+}
+.vwb-chips {
+  display: flex;
+  gap: var(--size-4-1, 4px);
+  flex-wrap: wrap;
+  align-items: center;
+}
+.vwb-chip {
+  padding: var(--size-4-1, 4px) var(--size-4-3, 12px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-smaller);
+  cursor: pointer;
+  border: 1px solid var(--vwb-line);
+  color: var(--text-muted);
+  background: transparent;
+  transition: color 0.12s ease, background-color 0.12s ease;
+}
+.vwb-chip:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-chip.is-on {
+  background: var(--vwb-accent);
+  border-color: var(--vwb-accent);
+  color: var(--text-on-accent);
+}
+/* 灰掉的胶囊（当前库 / 已经装好了）：看着就不该点 */
+.vwb-chip.is-off {
+  opacity: 0.45;
+  cursor: default;
+}
+.vwb-chips input[type="color"] {
+  width: var(--size-4-8, 34px);
+  height: var(--size-4-6, 26px);
+  border: 1px solid var(--vwb-line);
+  border-radius: var(--vwb-rad);
+  background: none;
+  padding: 0;
+  cursor: pointer;
+}
+.vwb-tg {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  margin: 0 0 var(--size-4-2, 8px);
+  cursor: pointer;
+  color: var(--text-muted);
+}
+/* 语言行：文字 + 三选 chips，结构和开关行不同 */
+.vwb-langrow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  margin: 0 0 var(--size-4-2, 8px);
+  color: var(--text-muted);
+}
+.vwb-langrow .vwb-chips {
+  display: flex;
+  gap: var(--size-4-1, 4px);
+}
+.vwb-tg input[type="checkbox"] {
+  accent-color: var(--vwb-accent);
+  width: var(--size-4-4, 15px);
+  height: var(--size-4-4, 15px);
+}
+.vwb-scope {
+  color: var(--text-faint);
+  margin: var(--size-4-1, 2px) 0 var(--size-4-3, 12px);
+  cursor: default;
+}
+.vwb-drawer-foot {
+  display: flex;
+  flex-direction: column;
+  gap: var(--size-4-2, 8px);
+  padding-top: var(--size-4-1, 2px);
+}
+.vwb-drawer-save {
+  width: 100%;
+}
+.vwb-link {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  cursor: pointer;
+  text-align: center;
+  padding: var(--size-4-1, 2px);
+  border-radius: var(--vwb-rad);
+}
+.vwb-link:hover {
+  color: var(--text-accent);
+  background: var(--vwb-hover);
+}
+
+/* 设置中心子页切换栏（Obsidian 原生设置页里仍保留） */
+.vwb-set-tabs {
+  display: flex;
+  gap: var(--size-4-1, 4px);
+  flex-wrap: wrap;
+  margin-bottom: var(--size-4-3, 12px);
+  padding-bottom: var(--size-4-3, 10px);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-set-tab {
+  padding: var(--size-4-1, 4px) var(--size-4-3, 12px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-smaller);
+  cursor: pointer;
+  border: 1px solid var(--vwb-line);
+  color: var(--text-muted);
+  background: transparent;
+}
+.vwb-set-tab:hover {
+  color: var(--text-normal);
+  background: var(--vwb-hover);
+}
+.vwb-set-tab.is-on {
+  background: var(--vwb-accent);
+  border-color: var(--vwb-accent);
+  color: var(--text-on-accent);
+}
+
+/* ---------------------------------------------------------------------------
+ *  17. 多选批量操作 / 移动浮层 / 通用浮层
+ * ------------------------------------------------------------------------- */
+
+/* 关键：工具条必须压在内容行之上。
+ * .vwb-main 是 .vwb-layer（position:relative; z-index:1），自成层叠上下文，
+ * 而 .vwb-content（position:relative）排在 .vwb-topbar 后面 —— 不抬 z-index 的话，
+ * 整个内容行会画在工具条的下拉弹层上面：看起来被遮挡，实际连点击都被下面那层接走。 */
+.vwb-topbar {
+  position: relative;
+  z-index: 30;
+}
+
+.vwb-row.is-multi,
+.vwb-card.is-multi {
+  border-color: var(--vwb-accent);
+  box-shadow: inset 0 0 0 1px var(--vwb-accent);
+  background: var(--vwb-tint);
+}
+
+/* 批量操作条：钉在文件区最上面 */
+.vwb-batch {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  flex-wrap: wrap;
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  margin-bottom: var(--vwb-gap);
+  border-radius: var(--vwb-rad);
+  position: sticky;
+  top: 0;
+  z-index: 6;
+}
+.vwb-batch-n {
+  font-size: var(--font-ui-smaller);
+  font-weight: 500;
+  color: var(--text-normal);
+  margin-right: var(--size-4-1, 4px);
+  white-space: nowrap;
+}
+
+/* 「移动到…」浮层：盖在文件区正中，列表内部滚动 */
+.vwb-move.vwb-glass {
+  background: var(--background-primary);
+  border: 1px solid var(--vwb-line-2);
+  border-radius: var(--vwb-rad-pop);
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-move {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 80;
+  width: min(420px, calc(100% - var(--size-4-10, 40px)));
+  max-height: min(70%, 520px);
+  display: flex;
+  flex-direction: column;
+  padding: var(--size-4-3, 12px);
+}
+.vwb-move-t {
+  font-size: var(--font-ui-small);
+  font-weight: 500;
+  color: var(--text-normal);
+  padding: 0 var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-bottom: var(--divider-width, 1px) solid var(--divider-color);
+}
+.vwb-move-list {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  padding: var(--size-4-1, 4px) var(--size-4-1, 2px);
+  overscroll-behavior: contain;
+}
+.vwb-move-i {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-1, 4px) var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+  cursor: pointer;
+  transition: background-color 0.12s ease;
+}
+.vwb-move-i:hover {
+  background: var(--vwb-hover);
+}
+.vwb-move-i.is-cur {
+  opacity: 0.5;
+}
+.vwb-move-path {
+  margin-left: auto;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  max-width: 45%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-move-foot {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: var(--size-4-2, 8px);
+  border-top: var(--divider-width, 1px) solid var(--divider-color);
+}
+
+/* 通用浮层：输入 / 确认 */
+.vwb-dlg.vwb-glass {
+  background: var(--background-primary);
+  border: 1px solid var(--vwb-line-2);
+  border-radius: var(--vwb-rad-pop);
+  box-shadow: var(--shadow-l, var(--shadow-s));
+}
+.vwb-dlg {
+  position: absolute;
+  left: 50%;
+  top: 22%;
+  transform: translateX(-50%);
+  z-index: 60;
+  width: min(420px, calc(100% - var(--size-4-8, 32px)));
+  padding: var(--size-4-4, 16px) var(--size-4-5, 18px);
+}
+.vwb-dlg-t {
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+  margin-bottom: var(--size-4-1, 4px);
+}
+.vwb-dlg-d {
+  font-size: var(--font-ui-smaller);
+  line-height: 1.6;
+  color: var(--text-muted);
+  white-space: pre-wrap;
+  margin-bottom: var(--size-4-3, 10px);
+}
+.vwb-dlg .vwb-in {
+  width: 100%;
+  box-sizing: border-box;
+}
+.vwb-dlg-f {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--size-4-2, 8px);
+  margin-top: var(--size-4-3, 12px);
+}
+
+/* 鼠标框选的选框 */
+.vwb-marquee {
+  position: absolute;
+  z-index: 45;
+  pointer-events: none;
+  border: 1px solid var(--vwb-accent);
+  background: var(--vwb-tint);
+  border-radius: var(--vwb-rad);
+}
+
+/* ---------------------------------------------------------------------------
+ *  18. 回收站子页
+ * ------------------------------------------------------------------------- */
+.vwb-trash-h {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+.vwb-trash-i {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  margin-bottom: var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  border: 1px solid var(--vwb-line);
+  background: var(--vwb-surface-2);
+}
+.vwb-trash-m {
+  flex: 1;
+  min-width: 0;
+}
+.vwb-trash-nm {
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-trash-pt {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ *  19. 跨库全文搜索的结果
+ * ------------------------------------------------------------------------- */
+.vwb-xhit-head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--size-4-2, 8px);
+  padding: var(--size-4-1, 2px) var(--size-4-1, 2px) var(--size-4-3, 10px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+.vwb-xhit-q {
+  color: var(--text-accent);
+}
+.vwb-xhit {
+  display: flex;
+  gap: var(--size-4-3, 12px);
+  padding: var(--size-4-2, 8px) var(--size-4-3, 12px);
+  margin-bottom: var(--size-4-1, 4px);
+  border-radius: var(--vwb-rad);
+  border: 1px solid var(--vwb-line);
+  background: var(--vwb-surface-2);
+  cursor: pointer;
+  transition: background-color 0.12s ease, border-color 0.12s ease;
+}
+.vwb-xhit:hover {
+  background: var(--vwb-hover);
+  border-color: var(--vwb-line-2);
+}
+/* 左边那个库名牌：当前库用主题色，别的库灰底 */
+.vwb-xhit-v {
+  flex: 0 0 auto;
+  max-width: 96px;
+  padding: 0 var(--size-4-2, 8px);
+  border-radius: var(--vwb-rad);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.8;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  background: var(--vwb-hover);
+  color: var(--text-muted);
+}
+.vwb-xhit-v.is-cur {
+  background: var(--vwb-tint-2);
+  color: var(--text-normal);
+}
+.vwb-xhit-m {
+  min-width: 0;
+  flex: 1;
+}
+.vwb-xhit-nm {
+  font-size: var(--font-ui-small);
+  color: var(--text-normal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-xhit-pt {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-top: 1px;
+}
+/* 命中片段：最多两行，超了省略 */
+.vwb-xhit-sn {
+  margin-top: var(--size-4-1, 2px);
+  font-size: var(--font-ui-smaller);
+  line-height: 1.5;
+  color: var(--text-muted);
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+/* 「按文件名 / 标签匹配」：没有正文片段时给一行说明，别空着让人以为坏了 */
+.vwb-xhit-byname {
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+.vwb-xhit-sn mark {
+  background: var(--text-highlight-bg, var(--vwb-tint-2));
+  color: var(--text-normal);
+  border-radius: var(--vwb-rad);
+  padding: 0 1px;
+}
+
+/* ---------------------------------------------------------------------------
+ *  20. 外观设置里的取色 / 壁纸小控件（色值来自用户，不是主题色）
+ * ------------------------------------------------------------------------- */
+.vwb-wp {
+  width: 62px;
+  height: 38px;
+  border-radius: var(--vwb-rad);
+  cursor: pointer;
+  border: 2px solid var(--vwb-line);
+  font-size: var(--font-ui-smaller);
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  padding-bottom: var(--size-4-1, 2px);
+  color: var(--text-normal);
+  background-size: cover;
+  background-position: center;
+  transition: border-color 0.12s ease, box-shadow 0.12s ease;
+}
+.vwb-wp:hover {
+  border-color: var(--vwb-line-2);
+}
+.vwb-wp.is-on {
+  border-color: var(--vwb-accent);
+  box-shadow: 0 0 0 2px var(--vwb-tint);
+}
+.vwb-rowset {
+  display: flex;
+  align-items: center;
+  gap: var(--size-4-2, 8px);
+  margin-bottom: var(--size-4-2, 8px);
+  font-size: var(--font-ui-smaller);
+  color: var(--text-muted);
+}
+.vwb-rowset .lb {
+  width: 44px;
+  flex: 0 0 44px;
+}
+.vwb-rowset input[type="range"] {
+  flex: 1;
+  min-width: 0;
+  accent-color: var(--vwb-accent);
+}
+.vwb-rowset .val {
+  width: 42px;
+  flex: 0 0 42px;
+  text-align: right;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+}
+.vwb-file {
+  flex: 1;
+  min-width: 0;
+  font-size: var(--font-ui-smaller);
+  color: var(--text-faint);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.vwb-sw {
+  width: var(--size-4-6, 24px);
+  height: var(--size-4-6, 24px);
+  border-radius: 50%;
+  cursor: pointer;
+  border: 2px solid transparent;
+  display: inline-block;
+  transition: transform 0.12s ease, border-color 0.12s ease;
+}
+.vwb-sw.is-on {
+  border-color: var(--text-normal);
+  transform: scale(1.12);
+}
+
+/* ---------------------------------------------------------------------------
+ *  21. 焦点与键盘可达性
+ * -------------------------------------------------------------------------
+ * 统一走 :focus-visible：鼠标点击不画圈，键盘 Tab 才画，颜色用主题的交互色。
+ */
+.vwb-root :focus-visible {
+  outline: 2px solid var(--interactive-accent);
+  outline-offset: 1px;
+}
+.vwb-root input:focus-visible,
+.vwb-root textarea:focus-visible,
+.vwb-root select:focus-visible {
+  outline-offset: 0;
+}
+.vwb-root .vwb-blk-ta:focus-visible {
+  outline: 1px solid var(--vwb-line-2);
+  outline-offset: 2px;
+}
+
+/* 通知别被设置抽屉盖住（抽屉 z-index 40，通知要压在它上面）。
+ * 这是 Obsidian 自己的容器，只能靠 !important 抬层。 */
+body .notice-container {
+  z-index: 95 !important;
+}

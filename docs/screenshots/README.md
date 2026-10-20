@@ -1,0 +1,26 @@
+# 截图
+
+README 与 Obsidian 市场页面要用的图都在这里（2026-10-20 已就位）。
+
+**两套图**：中文版（无后缀，`README.md` 用）+ 英文版（`-en` 后缀，`README_EN.md` 用）。
+
+| 文件名 | 英文版 | 内容 | 在 README 的位置 |
+| --- | --- | --- | --- |
+| `main.jpg` | `main-en.jpg` | 主界面全景：左库导航 + 中文件区 + 右预览 | 顶部门面 |
+| `vaults.png` | `vaults-en.png` | 库导航 + 右键库菜单（切换/安装/浏览/隐藏…） | 「多库统一导航」 |
+| `search-all.jpg` | `search-all-en.jpg` | 🌐 所有库全文搜索：命中 + 高亮 + 来源库 | 「跨库全文搜索」 |
+| `search-current.jpg` | `search-current-en.jpg` | 📍 当前库搜索：文件名 / 标签 | 「跨库全文搜索」 |
+| `open-mode.jpg` | `open-mode-en.jpg` | 「打开方式切换」下拉展开（三种模式） | 「三种打开方式」 |
+| `editor.jpg` | `editor-en.png` | 内置编辑器：双栏分屏 + 右侧大纲 | 「内置编辑器」 |
+| `media.jpg` | `media-en.jpg` | 图片预览（demo-cover.svg） | 「三种打开方式」之后 |
+| `settings.jpg` | `settings-en.jpg` | 设置抽屉：外观页（预设/壁纸/主题色/语言） | 「外观个性化」 |
+
+> 重拍 / 补拍时：切到对应语言界面，覆盖同名文件即可（README 无需改动）。
+
+> 截图均取自演示库（无隐私内容）；部分图带红框标注用于突出功能点。
+
+## 规范
+
+- 宽度 1200px 左右、PNG/JPG 均可
+- 界面语言：中文版 README 用中文界面；`README_EN.md` 共用同一批图
+- 别带私人笔记内容、真实库名和绝对路径

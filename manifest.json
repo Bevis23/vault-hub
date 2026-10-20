@@ -1,0 +1,10 @@
+{
+  "id": "vault-hub",
+  "name": "Vault Hub",
+  "version": "0.14.0",
+  "minAppVersion": "1.5.0",
+  "description": "Browse, preview and edit notes across all local vaults in one unified workbench without switching windows. Each vault stays fully isolated, and the plugin installs itself when you switch.",
+  "author": "Bevis23",
+  "authorUrl": "https://github.com/Bevis23",
+  "isDesktopOnly": true
+}
