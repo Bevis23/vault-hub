@@ -1,11 +1,11 @@
 /* -------------------------------------------------------------------------
- *  Vault Hub · 多库工作台 —— 模块入口（require + 视图类型）
+ *  Vault Workbench · 多库工作台 —— 模块入口（require + 视图类型）
  *  （本片段由 build.js 拼进 main.js，不要单独 require）
  * ------------------------------------------------------------------------- */
 'use strict';
 
 /*
- * Vault Hub · 多库工作台
+ * Vault Workbench · 多库工作台
  * 免构建版本：纯 CommonJS，改完直接重载 Obsidian 即可生效。
  *
  * 架构：双通道数据层
@@ -29,4 +29,4 @@ const {
   Plugin, ItemView, PluginSettingTab, Setting, Notice, MarkdownRenderer, TFile, TFolder, Component
 } = obsidian;
 
-const VIEW_TYPE = 'vault-hub-view';
+const VIEW_TYPE = 'vault-workbench-view';

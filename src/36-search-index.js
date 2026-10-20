@@ -81,7 +81,7 @@ function loadSearchIndex(rootPath) {
 }
 function saveSearchIndex(rootPath, idx) {
   const w = writeJsonFile(searchIndexPath(rootPath), idx);
-  if (!w.ok) console.error('[vault-hub] failed writing search index', w.err);
+  if (!w.ok) console.error('[vault-workbench] failed writing search index', w.err);
   return w.ok;
 }
 function newSearchIndex(rootPath) {

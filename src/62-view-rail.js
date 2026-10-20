@@ -90,7 +90,7 @@ Object.assign(WorkbenchView.prototype, {
     const app = this.plugin.app;
     if (app.setting && typeof app.setting.open === 'function') {
       app.setting.open();
-      if (typeof app.setting.openTabById === 'function') app.setting.openTabById('vault-hub');
+      if (typeof app.setting.openTabById === 'function') app.setting.openTabById('vault-workbench');
     } else {
       new Notice(tr('rail.openSettingsTip'));
     }

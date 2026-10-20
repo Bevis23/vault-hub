@@ -274,7 +274,7 @@ Object.assign(WorkbenchView.prototype, {
       }
       this.collectHeadings(content, host);
       // 外部库：相对图片 / 未解析内嵌 / 内部链接都要自己兜底
-      try { this.fixupRenderedContent(host, note); } catch (e) { console.warn('[vault-hub] fixup failed', e); }
+      try { this.fixupRenderedContent(host, note); } catch (e) { console.warn('[vault-workbench] fixup failed', e); }
       if (this.outlineOpen) this.renderOutline();
       return;
     }

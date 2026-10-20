@@ -1,5 +1,5 @@
 /* ==========================================================================
- *  Vault Hub · 库管理工作台
+ *  Vault Workbench · 库管理工作台
  *
  *  ⚠ 本文件由 build.js 从 src/ 拼接生成，请不要直接编辑。
  *    要改代码请改 src/ 下对应的片段，然后跑：node build.js
@@ -8,13 +8,13 @@
  * ========================================================================== */
 
 /* -------------------------------------------------------------------------
- *  Vault Hub · 多库工作台 —— 模块入口（require + 视图类型）
+ *  Vault Workbench · 多库工作台 —— 模块入口（require + 视图类型）
  *  （本片段由 build.js 拼进 main.js，不要单独 require）
  * ------------------------------------------------------------------------- */
 'use strict';
 
 /*
- * Vault Hub · 多库工作台
+ * Vault Workbench · 多库工作台
  * 免构建版本：纯 CommonJS，改完直接重载 Obsidian 即可生效。
  *
  * 架构：双通道数据层
@@ -38,7 +38,7 @@ const {
   Plugin, ItemView, PluginSettingTab, Setting, Notice, MarkdownRenderer, TFile, TFolder, Component
 } = obsidian;
 
-const VIEW_TYPE = 'vault-hub-view';
+const VIEW_TYPE = 'vault-workbench-view';
 
 /* -------------------------------------------------------------------------
  *  i18n 词典（中英双语）
@@ -372,7 +372,7 @@ const I18N_ZH = {
   'rail.rediscover': '重新发现',
   'rail.rediscover.tip': '重新扫描本机 Obsidian 库',
   'rail.rediscovered': '已重新扫描仓库',
-  'rail.openSettingsTip': '请到 设置 → 第三方插件 → Vault Hub 打开设置',
+  'rail.openSettingsTip': '请到 设置 → 第三方插件 → Vault Workbench 打开设置',
   'rail.menu.switch': '切换到此库',
   'rail.menu.switchCur': '这就是当前库',
   'rail.menu.switchWhy': '已经在这个库里了',
@@ -432,7 +432,7 @@ const I18N_ZH = {
   'guide.icon5': '不想在工作台里改，跳回 Obsidian 原生编辑器',
 
   /* ---- 关于页 ---- */
-  'about.title': 'Vault Hub · 多库工作台',
+  'about.title': 'Vault Workbench · 多库工作台',
   'about.intro': '多库管理工作台。当前库走 Obsidian 原生 API（完整编辑能力），其他仓库通过磁盘扫描：可以读、可以改已有文件的正文（原子写），动不了库结构（新建 / 重命名 / 删除）—— 这些在左边库导航右键那个库 → 切换到此库 就能做，切过去照样有工作台。',
   'about.version': '版本：{ver}',
   'about.rail': '左侧「obsidian库导航」可展开 / 收缩；工具条「打开方式切换」可在右侧预览 / 工作面板 / 原生编辑之间切换。',
@@ -946,7 +946,7 @@ const I18N_ZH = {
   'views.empty': '还没有保存的视图 —— 设好搜索 / 排序后点下方「保存当前」',
   'scope.all.tip': '正在跨库全文搜索（第一次为每个库建索引时会稍慢）\n点击回到只搜当前库',
   'scope.current.tip': '只搜当前库的文件名与标签\n点击切成「所有库」—— 搜全部库的正文，不用切窗口',
-  'set.title': 'Vault Hub · 多库工作台',
+  'set.title': 'Vault Workbench · 多库工作台',
   'set.tab.general': '通用',
   'set.tab.appearance': '外观',
   'set.tab.vaults': '库管理',
@@ -975,7 +975,7 @@ const I18N_ZH = {
   'set.logNote': '当前仅记录新建、重命名、删除等写操作；带「撤销」按钮的都能回退。',
   'set.logRecent': '操作日志（最近 20 条）',
   'set.logEmpty': '暂无记录',
-  'set.aboutIntro': 'Vault Hub —— 多库工作台。当前库走 Obsidian 原生 API（完整编辑能力），其他仓库通过磁盘扫描：可以读、可以改已有文件的正文（原子写）；新建 / 重命名 / 删除要切到那个库去做 —— 在左侧库导航右键目标库 → 切换到此库，会先把工作台装过去再切，切过去照样有工作台。',
+  'set.aboutIntro': 'Vault Workbench —— 多库工作台。当前库走 Obsidian 原生 API（完整编辑能力），其他仓库通过磁盘扫描：可以读、可以改已有文件的正文（原子写）；新建 / 重命名 / 删除要切到那个库去做 —— 在左侧库导航右键目标库 → 切换到此库，会先把工作台装过去再切，切过去照样有工作台。',
   'set.aboutRoadmap': '路线图：收集箱消化模式 → 批量整理 → 规则引擎与体检报告 → 统计热力图 → 跨库搜索。',
   'set.aboutPlan': '设置中心的分页结构已预留，后续新功能都往这里挂。',
   'set.wallpaperHint': 'D:\\图片\\wallpaper.jpg',
@@ -1358,7 +1358,7 @@ const I18N_EN = {
   'rail.rediscover': 'Rediscover',
   'rail.rediscover.tip': 'Rescan the Obsidian vaults on this machine',
   'rail.rediscovered': 'Vaults rescanned',
-  'rail.openSettingsTip': 'Open Settings → Community plugins → Vault Hub',
+  'rail.openSettingsTip': 'Open Settings → Community plugins → Vault Workbench',
   'rail.menu.switch': 'Switch to this vault',
   'rail.menu.switchCur': 'This is the current vault',
   'rail.menu.switchWhy': 'You are already in this vault',
@@ -1416,7 +1416,7 @@ const I18N_EN = {
   'guide.icon4': 'Top-right of the preview: fill the whole workspace / restore',
   'guide.icon5': 'Rather not edit here — jump back to the Obsidian editor',
 
-  'about.title': 'Vault Hub · multi-vault workbench',
+  'about.title': 'Vault Workbench · multi-vault workbench',
   'about.intro': 'A workbench for managing many vaults. The current vault uses the Obsidian API (full editing), other vaults are read from disk: you can read them and edit the body of existing files (atomic writes), but not change their structure (create / rename / delete) — right-click that vault in the sidebar and switch to it for that; the workbench comes with you.',
   'about.version': 'Version: {ver}',
   'about.rail': 'The vault sidebar can be expanded / collapsed; “Open with” on the toolbar switches between preview panel / workbench panel / native editor.',
@@ -1474,9 +1474,9 @@ const I18N_EN = {
   'editorMenu.new-folder': 'New folder',
   'editorMenu.new-folder.tip': 'Create a subfolder in the current folder',
 
-  'misc.ribbonTip': 'Vault Hub',
-  'misc.viewTitle': 'Vault Hub',
-  'misc.cmdOpen': 'Open Vault Hub',
+  'misc.ribbonTip': 'Vault Workbench',
+  'misc.viewTitle': 'Vault Workbench',
+  'misc.cmdOpen': 'Open Vault Workbench',
   'misc.cmdRefresh': 'Refresh vault index',
   'preview.edit': 'Edit',
   'preview.editTip': 'Toggle edit mode',
@@ -1877,7 +1877,7 @@ const I18N_EN = {
   'views.empty': 'No saved views yet — set a search / sort, then click Save current below',
   'scope.all.tip': 'Searching full text across all vaults (first run builds an index per vault and is slower)\nClick to search the current vault only',
   'scope.current.tip': 'Searches names and tags in the current vault only\nClick to switch to “All vaults” — full text of every vault, no window swapping',
-  'set.title': 'Vault Hub · multi-vault workbench',
+  'set.title': 'Vault Workbench · multi-vault workbench',
   'set.tab.general': 'General',
   'set.tab.appearance': 'Appearance',
   'set.tab.vaults': 'Manage vaults',
@@ -1906,7 +1906,7 @@ const I18N_EN = {
   'set.logNote': 'Currently logs write operations such as create, rename and delete; anything with an Undo button can be reverted.',
   'set.logRecent': 'Activity log (latest 20)',
   'set.logEmpty': 'Nothing yet',
-  'set.aboutIntro': 'Vault Hub — a multi-vault workbench. The current vault uses the Obsidian API (full editing); other vaults are read from disk: you can read them and edit the body of existing files (atomic writes). Creating / renaming / deleting needs you to switch into that vault — right-click the target vault in the sidebar → Switch to this vault; the workbench is installed there first, so it is available after switching.',
+  'set.aboutIntro': 'Vault Workbench — a multi-vault workbench. The current vault uses the Obsidian API (full editing); other vaults are read from disk: you can read them and edit the body of existing files (atomic writes). Creating / renaming / deleting needs you to switch into that vault — right-click the target vault in the sidebar → Switch to this vault; the workbench is installed there first, so it is available after switching.',
   'set.aboutRoadmap': 'Roadmap: inbox triage → batch organize → rules engine & health report → activity heatmap → cross-vault search.',
   'set.aboutPlan': 'The settings page structure is reserved — future features will slot in here.',
   'set.wallpaperHint': 'D:\\images\\wallpaper.jpg',
@@ -2647,7 +2647,7 @@ function obsidianConfigPath() {
 /* 工作台自己的全局目录：放「跨库共享的库清单」，
  * 这样在 A 库里登记过的库，切到 B 库也还在导航里（库清单不再跟着库各自一份）。 */
 function workbenchHome() {
-  return pathMod.join(appDataDir(), 'vault-hub');
+  return pathMod.join(appDataDir(), 'vault-workbench');
 }
 function sharedVaultsPath() {
   return pathMod.join(workbenchHome(), 'vaults.json');
@@ -2957,7 +2957,7 @@ function loadSearchIndex(rootPath) {
 }
 function saveSearchIndex(rootPath, idx) {
   const w = writeJsonFile(searchIndexPath(rootPath), idx);
-  if (!w.ok) console.error('[vault-hub] failed writing search index', w.err);
+  if (!w.ok) console.error('[vault-workbench] failed writing search index', w.err);
   return w.ok;
 }
 function newSearchIndex(rootPath) {
@@ -3186,7 +3186,7 @@ function readTrashMap(rootPath) {
 }
 function writeTrashMap(rootPath, map) {
   const w = writeJsonFile(trashMapPath(rootPath), map);
-  if (!w.ok) console.error('[vault-hub] failed writing trash map', w.err);
+  if (!w.ok) console.error('[vault-workbench] failed writing trash map', w.err);
   return w.ok;
 }
 
@@ -3435,7 +3435,7 @@ function scanExternalVault(rootPath) {
     };
     walk(rootPath, '');
   } catch (e) {
-    console.error('[vault-hub] scan failed', e);
+    console.error('[vault-workbench] scan failed', e);
   }
   return { files: files, folders: folders, folderCount: folderCount };
 }
@@ -3502,13 +3502,13 @@ class VaultWorkbenchPlugin extends Plugin {
     this.addRibbonIcon('layout-grid', tr('misc.ribbonTip'), () => this.activateView());
 
     this.addCommand({
-      id: 'open-vault-hub',
+      id: 'open-vault-workbench',
       name: tr('misc.cmdOpen'),
       callback: () => this.activateView()
     });
 
     this.addCommand({
-      id: 'refresh-vault-hub',
+      id: 'refresh-vault-workbench',
       name: tr('misc.cmdRefresh'),
       callback: () => {
         this.externalCache = {};
@@ -3673,7 +3673,7 @@ class VaultWorkbenchPlugin extends Plugin {
         }
       }
     } catch (e) {
-      console.error('[vault-hub] read obsidian.json failed', e);
+      console.error('[vault-workbench] read obsidian.json failed', e);
     }
 
     // 2) 当前库兜底
@@ -3756,7 +3756,7 @@ class VaultWorkbenchPlugin extends Plugin {
       };
       walk(root);
     } catch (e) {
-      console.error('[vault-hub] failed reading folder tree', e);
+      console.error('[vault-workbench] failed reading folder tree', e);
     }
     return out;
   }
@@ -3863,7 +3863,7 @@ Object.assign(VaultWorkbenchPlugin.prototype, {
   },
   writeSharedVaults(data) {
     const w = writeJsonFile(sharedVaultsPath(), data);
-    if (!w.ok) console.error('[vault-hub] failed writing global vault list', w.err);
+    if (!w.ok) console.error('[vault-workbench] failed writing global vault list', w.err);
     return w.ok;
   },
   /* 登记一个库：本库设置 + 全局清单各写一份。
@@ -4021,7 +4021,7 @@ Object.assign(VaultWorkbenchPlugin.prototype, {
       // 1) 正文命中
       let idx = null;
       try { idx = this.ensureSearchIndex(v.path); } catch (e) {
-        console.error('[vault-hub] failed building index', v.path, e);
+        console.error('[vault-workbench] failed building index', v.path, e);
       }
       if (idx) {
         for (const h of searchIndex(idx, terms, limit, 40)) {
@@ -4085,7 +4085,7 @@ Object.assign(VaultWorkbenchPlugin.prototype, {
       }
       return true;
     } catch (e) {
-      console.error('[vault-hub] failed clearing index', e);
+      console.error('[vault-workbench] failed clearing index', e);
       return false;
     }
   },
@@ -4729,7 +4729,7 @@ Object.assign(WorkbenchView.prototype, {
     const app = this.plugin.app;
     if (app.setting && typeof app.setting.open === 'function') {
       app.setting.open();
-      if (typeof app.setting.openTabById === 'function') app.setting.openTabById('vault-hub');
+      if (typeof app.setting.openTabById === 'function') app.setting.openTabById('vault-workbench');
     } else {
       new Notice(tr('rail.openSettingsTip'));
     }
@@ -9408,7 +9408,7 @@ Object.assign(WorkbenchView.prototype, {
       }
       this.collectHeadings(content, host);
       // 外部库：相对图片 / 未解析内嵌 / 内部链接都要自己兜底
-      try { this.fixupRenderedContent(host, note); } catch (e) { console.warn('[vault-hub] fixup failed', e); }
+      try { this.fixupRenderedContent(host, note); } catch (e) { console.warn('[vault-workbench] fixup failed', e); }
       if (this.outlineOpen) this.renderOutline();
       return;
     }

@@ -1,14 +1,14 @@
 @echo off
-rem Vault Hub - build src/ into main.js, then copy to your Obsidian plugin dir.
+rem Vault Workbench - build src/ into main.js, then copy to your Obsidian plugin dir.
 rem Pure ASCII on purpose: cmd.exe mangles UTF-8 batch files with non-ASCII paths.
 rem
 rem Setup: set VWB_VAULT_DIR once, e.g.
-rem   setx VWB_VAULT_DIR "D:\MyVault\.obsidian\plugins\vault-hub"
+rem   setx VWB_VAULT_DIR "D:\MyVault\.obsidian\plugins\vault-workbench"
 
 setlocal
 if "%VWB_VAULT_DIR%"=="" (
   echo VWB_VAULT_DIR is not set.
-  echo Run: setx VWB_VAULT_DIR "D:\MyVault\.obsidian\plugins\vault-hub"
+  echo Run: setx VWB_VAULT_DIR "D:\MyVault\.obsidian\plugins\vault-workbench"
   echo Then open a new terminal and run this script again.
   exit /b 1
 )

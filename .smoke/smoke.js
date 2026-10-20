@@ -1201,7 +1201,7 @@ const find = (root, sel, text) =>
   ok(view.drawerPage === 'logs', '点「操作日志」子页');
   click(navOf('关于'));
   ok(view.drawerPage === 'about', '点「关于」子页');
-  ok(view.drawerEl.textContent.indexOf('Vault Hub') >= 0, '关于子页有插件说明');
+  ok(view.drawerEl.textContent.indexOf('Vault Workbench') >= 0, '关于子页有插件说明');
   view.drawerPage = 'appearance';
   view.toggleDrawer(false);
   plugin.settings.open.mode = 'panel';
@@ -1729,7 +1729,7 @@ const find = (root, sel, text) =>
   ok(!!H.appDataDir(), '配置目录按系统取，拿得到：' + H.appDataDir());
   ok(nrm(H.obsidianConfigPath()).indexOf('obsidian/obsidian.json') > 0,
     'obsidian.json = 配置目录 + obsidian/obsidian.json，实际 ' + H.obsidianConfigPath());
-  ok(nrm(H.sharedVaultsPath()).indexOf('vault-hub/vaults.json') > 0,
+  ok(nrm(H.sharedVaultsPath()).indexOf('vault-workbench/vaults.json') > 0,
     '全局库清单路径，实际 ' + H.sharedVaultsPath());
 
   // 2) 版本号：0.10.0 必须比 0.9.2 新（按字符串比会翻车）

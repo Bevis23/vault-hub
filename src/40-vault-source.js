@@ -50,7 +50,7 @@ function scanExternalVault(rootPath) {
     };
     walk(rootPath, '');
   } catch (e) {
-    console.error('[vault-hub] scan failed', e);
+    console.error('[vault-workbench] scan failed', e);
   }
   return { files: files, folders: folders, folderCount: folderCount };
 }

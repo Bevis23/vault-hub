@@ -9,6 +9,14 @@
 
 ## [0.14.0] - 2026-10-20 — i18n 治理 + 模块拆分 + 上架准备
 
+### Changed
+
+- **插件改名：`vault-hub` → `vault-workbench`，显示名 `Vault Hub` → `Vault Workbench`**（上架前发现
+  `vault-hub` 这个 id 已被另一个插件占用，趁无用户时改，成本最低）
+  - `manifest.json` 的 `id` / `name`、视图类型 `vault-workbench-view`、命令 id、
+    全局数据目录 `%APPDATA%/vault-workbench/`、插件目录 `.obsidian/plugins/vault-workbench/`
+  - 中文语境仍叫「多库工作台」，不变
+
 ### Fixed
 
 - **切语言后部分界面不刷新**：搜索框占位符、「＋新建」「刷新」按钮、预览头按钮提示、

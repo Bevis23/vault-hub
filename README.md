@@ -1,4 +1,4 @@
-# Vault Hub｜多库工作台
+# Vault Workbench｜多库工作台
 
 > 给 Obsidian 装上精美工作台 UI
 > 在一个工作台浏览、预览、编辑本机所有 Obsidian 库，无需反复切换窗口。
@@ -75,7 +75,7 @@
 
 ## 📦 安装
 
-设置 → 第三方插件 → 关闭安全模式 → 浏览 → 搜 **Vault Hub** → 安装并启用。
+设置 → 第三方插件 → 关闭安全模式 → 浏览 → 搜 **Vault Workbench** → 安装并启用。
 
 手动安装与 BRAT 见 **[安装说明](docs/安装说明.md)**。
 
@@ -129,10 +129,10 @@
 | Obsidian 的 `obsidian.json` | 读 | 自动发现本机有哪些库（按系统定位配置目录） |
 | 其他库的笔记与附件 | 读 + 改 + 建 / 改名 / 删除 | 不切库就能浏览、编辑与改结构（原子写；删除进该库的 `.trash`，可撤销） |
 | 其他库的 `.trash/` | 写 | 在别的库删除的文件先挪到这里，不是直接删 |
-| 目标库的 `.obsidian/plugins/vault-hub/` | 写 | 切库前把本插件装过去 |
+| 目标库的 `.obsidian/plugins/vault-workbench/` | 写 | 切库前把本插件装过去 |
 | 目标库的 `.obsidian/community-plugins.json` | 读写 | 在那边启用本插件 |
-| 本机 `vault-hub/vaults.json` | 读写 | 跨库共享的库清单 |
-| 本机 `vault-hub/index/*.json` | 读写 | **跨库全文搜索的索引**（存的是去语法后的纯文本，每篇最多 3000 字），删掉不影响笔记，下次搜索会重建 |
+| 本机 `vault-workbench/vaults.json` | 读写 | 跨库共享的库清单 |
+| 本机 `vault-workbench/index/*.json` | 读写 | **跨库全文搜索的索引**（存的是去语法后的纯文本，每篇最多 3000 字），删掉不影响笔记，下次搜索会重建 |
 
 自部署只会在**已经是 Obsidian 库**（里面有 `.obsidian`）的文件夹里进行，不会凭空造出一个新库。
 

@@ -21,13 +21,13 @@ class VaultWorkbenchPlugin extends Plugin {
     this.addRibbonIcon('layout-grid', tr('misc.ribbonTip'), () => this.activateView());
 
     this.addCommand({
-      id: 'open-vault-hub',
+      id: 'open-vault-workbench',
       name: tr('misc.cmdOpen'),
       callback: () => this.activateView()
     });
 
     this.addCommand({
-      id: 'refresh-vault-hub',
+      id: 'refresh-vault-workbench',
       name: tr('misc.cmdRefresh'),
       callback: () => {
         this.externalCache = {};
@@ -192,7 +192,7 @@ class VaultWorkbenchPlugin extends Plugin {
         }
       }
     } catch (e) {
-      console.error('[vault-hub] read obsidian.json failed', e);
+      console.error('[vault-workbench] read obsidian.json failed', e);
     }
 
     // 2) 当前库兜底
@@ -275,7 +275,7 @@ class VaultWorkbenchPlugin extends Plugin {
       };
       walk(root);
     } catch (e) {
-      console.error('[vault-hub] failed reading folder tree', e);
+      console.error('[vault-workbench] failed reading folder tree', e);
     }
     return out;
   }

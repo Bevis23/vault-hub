@@ -29,7 +29,7 @@ Object.assign(VaultWorkbenchPlugin.prototype, {
   },
   writeSharedVaults(data) {
     const w = writeJsonFile(sharedVaultsPath(), data);
-    if (!w.ok) console.error('[vault-hub] failed writing global vault list', w.err);
+    if (!w.ok) console.error('[vault-workbench] failed writing global vault list', w.err);
     return w.ok;
   },
   /* 登记一个库：本库设置 + 全局清单各写一份。

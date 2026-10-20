@@ -1,4 +1,4 @@
-# Vault Hub · 架构与开发笔记
+# Vault Workbench · 架构与开发笔记
 
 > 面向开发者。**给用户看的介绍在 [README.md](../README.md)，版本记录在 [CHANGELOG.md](../CHANGELOG.md)。**
 
@@ -9,7 +9,7 @@
 - 改 `src/` 下的片段 → `node build.js`（拼成根目录 `main.js`）→ 同步 → 在 Obsidian 里按 `Ctrl+R`
 - 一条龙：`bash sync.sh`（Windows 可双击 `sync.bat`），它会自动先 build 再同步
 - 同步目标目录通过环境变量 `VWB_VAULT_DIR` 指定；也可以写进 `.dev-local.sh`（已 gitignore，不会泄露你的库路径）
-- 首次启用：Obsidian 设置 → 第三方插件 → 关闭「安全模式」→ 找到 **Vault Hub 库管理工作台** 并开启
+- 首次启用：Obsidian 设置 → 第三方插件 → 关闭「安全模式」→ 找到 **Vault Workbench 库管理工作台** 并开启
 - 打开工作台：左侧 ribbon 的「布局网格」图标，或命令面板搜「打开库管理工作台」
 
 > 采用**免构建方案**（纯 CommonJS + `require`），不需要 `npm install`。
@@ -123,7 +123,7 @@ src/
 | 以前 | 现在 |
 | --- | --- |
 | 写死 `%APPDATA%/obsidian/obsidian.json` | `appDataDir()` 按 `process.platform` 取：Windows `%APPDATA%` / mac `~/Library/Application Support` / Linux `~/.config` |
-| 库清单只存在本库的 `data.json` | 同时写一份到全局 `vault-hub/vaults.json`（切到别的库登记还在） |
+| 库清单只存在本库的 `data.json` | 同时写一份到全局 `vault-workbench/vaults.json`（切到别的库登记还在） |
 | 磁盘错误直接抛英文 `EACCES` | `fsErrorText()` 按 code 分类成权限 / 只读盘 / 路径不存在 / 空间不足 / 被占用 |
 | 版本号按字符串比（0.10 < 0.9） | `cmpVer()` 按段数值比 |
 

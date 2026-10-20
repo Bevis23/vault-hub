@@ -147,7 +147,7 @@ function readTrashMap(rootPath) {
 }
 function writeTrashMap(rootPath, map) {
   const w = writeJsonFile(trashMapPath(rootPath), map);
-  if (!w.ok) console.error('[vault-hub] failed writing trash map', w.err);
+  if (!w.ok) console.error('[vault-workbench] failed writing trash map', w.err);
   return w.ok;
 }
 

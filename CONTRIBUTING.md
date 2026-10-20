@@ -1,6 +1,6 @@
 # 贡献指南
 
-感谢你想让 Vault Hub 变得更好。这篇文档讲清楚怎么把代码跑起来、代码怎么组织、以及 PR 的期望。
+感谢你想让 Vault Workbench 变得更好。这篇文档讲清楚怎么把代码跑起来、代码怎么组织、以及 PR 的期望。
 
 ## 先把环境跑起来
 
@@ -8,13 +8,13 @@
 
 ```bash
 git clone <本仓库地址>
-cd vault-hub
+cd vault-workbench
 
 # 1. 构建：把 src/ 拼成根目录的 main.js
 node build.js
 
 # 2. 同步到你的 Obsidian 库里自测
-export VWB_VAULT_DIR="/你的库/.obsidian/plugins/vault-hub"
+export VWB_VAULT_DIR="/你的库/.obsidian/plugins/vault-workbench"
 bash sync.sh          # Windows 也可以双击 sync.bat
 
 # 3. 在 Obsidian 里 Ctrl + R 重载

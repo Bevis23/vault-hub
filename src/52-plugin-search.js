@@ -42,7 +42,7 @@ Object.assign(VaultWorkbenchPlugin.prototype, {
       // 1) 正文命中
       let idx = null;
       try { idx = this.ensureSearchIndex(v.path); } catch (e) {
-        console.error('[vault-hub] failed building index', v.path, e);
+        console.error('[vault-workbench] failed building index', v.path, e);
       }
       if (idx) {
         for (const h of searchIndex(idx, terms, limit, 40)) {
@@ -106,7 +106,7 @@ Object.assign(VaultWorkbenchPlugin.prototype, {
       }
       return true;
     } catch (e) {
-      console.error('[vault-hub] failed clearing index', e);
+      console.error('[vault-workbench] failed clearing index', e);
       return false;
     }
   },

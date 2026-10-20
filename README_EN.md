@@ -1,4 +1,4 @@
-# Vault Hub | Multi-Vault Workbench
+# Vault Workbench | Multi-Vault Workbench
 
 > A polished workbench UI for Obsidian.
 > Browse, preview and edit every vault on this machine from one workbench —
@@ -65,7 +65,7 @@
 
 ## 📦 Install
 
-Settings → Community plugins → turn off Restricted mode → Browse → search **Vault Hub** → install & enable.
+Settings → Community plugins → turn off Restricted mode → Browse → search **Vault Workbench** → install & enable.
 
 Manual install and BRAT: see **[Install guide](docs/安装说明.md)**.
 
@@ -73,7 +73,7 @@ Manual install and BRAT: see **[Install guide](docs/安装说明.md)**.
 
 ## 🚀 Quick start
 
-1. Click the grid icon in the left ribbon (or run "Open Vault Hub" from the command palette)
+1. Click the grid icon in the left ribbon (or run "Open Vault Workbench" from the command palette)
 2. All your vaults are listed on the left; the one marked `当前` is the active one. Click to browse another
 3. Want to edit there? → **right-click that vault → Switch to this vault** (the plugin is installed first, then it jumps)
 
@@ -115,10 +115,10 @@ Browsing other vaults means reading outside the current one. All of this happens
 | Obsidian's `obsidian.json` | read | Discover which vaults exist on this machine |
 | Notes & attachments in other vaults | read + write + create / rename / delete | Browse, edit and restructure without switching (atomic writes; deletes go to that vault's `.trash` and can be undone) |
 | `.trash/` in other vaults | write | Deleted files are moved here first — never removed outright |
-| `.obsidian/plugins/vault-hub/` in the target vault | write | Install the plugin there before switching |
+| `.obsidian/plugins/vault-workbench/` in the target vault | write | Install the plugin there before switching |
 | `.obsidian/community-plugins.json` in the target vault | read/write | Enable the plugin there |
-| `vault-hub/vaults.json` on this machine | read/write | Shared list of vaults |
-| `vault-hub/index/*.json` on this machine | read/write | **Cross-vault search index** (plain text with markup stripped, capped at 3000 chars per note). Deleting it never touches your notes — it's rebuilt on the next search |
+| `vault-workbench/vaults.json` on this machine | read/write | Shared list of vaults |
+| `vault-workbench/index/*.json` on this machine | read/write | **Cross-vault search index** (plain text with markup stripped, capped at 3000 chars per note). Deleting it never touches your notes — it's rebuilt on the next search |
 
 Self-install only happens in folders that **already are vaults** (they contain `.obsidian`). It never turns a random folder into a new vault.
 

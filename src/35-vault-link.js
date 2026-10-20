@@ -22,7 +22,7 @@ function obsidianConfigPath() {
 /* 工作台自己的全局目录：放「跨库共享的库清单」，
  * 这样在 A 库里登记过的库，切到 B 库也还在导航里（库清单不再跟着库各自一份）。 */
 function workbenchHome() {
-  return pathMod.join(appDataDir(), 'vault-hub');
+  return pathMod.join(appDataDir(), 'vault-workbench');
 }
 function sharedVaultsPath() {
   return pathMod.join(workbenchHome(), 'vaults.json');

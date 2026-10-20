@@ -1,6 +1,6 @@
 {
-  "id": "vault-hub",
-  "name": "Vault Hub",
+  "id": "vault-workbench",
+  "name": "Vault Workbench",
   "version": "0.14.0",
   "minAppVersion": "1.5.0",
   "description": "Browse, preview and edit notes across all local vaults in one unified workbench without switching windows. Each vault stays fully isolated, and the plugin installs itself when you switch.",
