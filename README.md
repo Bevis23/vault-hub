@@ -1,147 +1,135 @@
-# Vault Workbench｜多库工作台
+# Vault Workbench | Multi-Vault Workbench
 
-**English** — Vault Workbench gives Obsidian a polished multi-vault workbench UI: browse, preview and edit every local vault in one place, without switching windows. Vaults stay fully isolated, and switching to any vault sets everything up automatically. Install from Obsidian's community plugin directory (search **Vault Workbench**), or read the [install guide](docs/安装说明.md). Full English version: [README_EN](README_EN.md).
+> A polished workbench UI for Obsidian.
+> Browse, preview and edit every vault on this machine from one workbench —
+> no more switching windows. Each vault stays fully isolated, and the plugin
+> installs itself into the target vault when you switch.
 
-> 🇨🇳 给 Obsidian 装上精美工作台 UI：在一个工作台浏览、预览、编辑本机所有 Obsidian 库，无需反复切换窗口。各库保持完全隔离，切换库时自动部署本插件。
+[English](README_EN.md) | [中文文档](README_ZH.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-desktop--only-blue)
 ![No build](https://img.shields.io/badge/build-none-brightgreen)
 ![Local only](https://img.shields.io/badge/network-none-lightgrey)
 
-![多库工作台主界面](docs/screenshots/main.jpg)
+![Multi-vault workbench main view](docs/screenshots/main-en.jpg)
 
 ---
 
-## ✨ 核心特性
+## ✨ Features
 
-**不是一个搜索框，也不是一个弹窗 —— 是一整块工作台**：
+**Not a search box, not a popup — a whole workbench:**
 
-| 区域 | 你在这干嘛 |
+| Area | What you do here |
 | --- | --- |
-| **左 · 库导航** | 本机所有 Obsidian 库一屏列完，点一下就翻过去；可展开 / 收缩、可隐藏、可起别名 |
-| **中 · 文件区** | 文件夹钻取 + 面包屑回退、网格 / 列表双视图、搜索与排序、**多选批量操作** |
-| **右 · 预览面板** | 看笔记、改笔记、看大纲；图片 / PDF / 音视频 / 文本各有处理 |
+| **Left · Vaults** | Every vault on this machine in one column. Click to switch. Collapsible, hideable, renameable |
+| **Middle · Files** | Folder drill-down + breadcrumbs, grid / list views, search & sort, **multi-select batch actions** |
+| **Right · Preview** | Read, edit, outline. Images / PDF / audio / video / text all handled |
 
-- **多库统一导航** —— 不切窗口、不重载，翻别的库跟翻一个文件夹一样；
-  空文件夹也列得出来（直接读库的目录树，不靠笔记反推）
+- **One place for all vaults** — no window switching, no reloading. Browsing another vault feels like browsing another folder. Empty folders show up too (the folder list comes from the vault's real directory tree, not guessed from notes)
 
-  ![多库导航与右键菜单](docs/screenshots/vaults.png)
+  ![Vault navigation and context menu](docs/screenshots/vaults-en.png)
 
-- **跨库全文搜索** —— 工具条点「📍 当前库」切成「🌐 所有库」，搜的就是**全部库的正文**：
-  结果左边标着是哪个库，下面是**命中片段 + 关键词高亮**，点一下直接打开。
-  索引建在本机，只在真的按「所有库」搜时才建
+- **Cross-vault full-text search** — flip 「📍 Current」 to 「🌐 All vaults」 in the toolbar and you're searching the **body text of every vault**. Each result shows which vault it's from, plus a **snippet with the match highlighted**. Click to open it right there. The index is built locally, and only when you actually search all vaults
 
-  按所有库搜（正文全文，命中 8 篇）：
+  All vaults (full body text, 8 hits):
 
-  ![跨库全文搜索](docs/screenshots/search-all.jpg)
+  ![Cross-vault search](docs/screenshots/search-all-en.jpg)
 
-  按当前库搜（文件名 / 标签，轻快）：
+  Current vault (names / tags, lightweight):
 
-  ![当前库搜索](docs/screenshots/search-current.jpg)
-- **右键库 → 切换到此库** —— 切库前会**先把本插件装进那个库再跳**，
-  所以切过去照样有工作台（这是目前独一份的能力）
-- **权限清楚** —— 当前库全权限；别的库**能看、能改正文，也能新建 / 重命名 / 删除**
-  （重命名会**自动修好这个库里的 `[[双链]]`**，删除进该库的 `.trash` 且可撤销）
-- **跨库复制** —— 多选后「复制到…」把笔记搬到另一个库，**原件留在原处**。
-  **不做跨库移动**：移动必然断链，复制不会
-- **回收站一处看全** —— 在别的库删掉的东西都能在「设置 → 回收站」里看到，
-  连**原来的路径**都记得，还原就回到原处（重启 Obsidian 也不丢）
-- **框选与空白右键** —— 文件区空白处**拖一下就框选**（按住 `Ctrl` 是追加）；
-  空白处**右键**有新建 / 全选 / 切换视图等操作
-- **内置编辑器** —— 即时渲染单画布（点哪改哪）、双栏分屏（滚动同步）、纯源码；
-  正文里右键唤起完整格式菜单
+  ![Current-vault search](docs/screenshots/search-current-en.jpg)
+- **Right-click a vault → Switch to this vault** — the plugin **installs itself into that vault first**, then jumps. You land in the same workbench you left
+- **Clear permissions** — full access in the current vault; in other vaults you can **read, edit, and also create / rename / delete**. Renaming **repairs that vault's `[[wikilinks]]` automatically**; deleting moves the file to that vault's `.trash` and can be undone
+- **Copy across vaults** — multi-select → 「Copy to…」 sends notes to another vault while the **original stays put**. **No cross-vault move**: moving breaks links, copying doesn't
+- **One trash for all vaults** — anything you delete in another vault shows up in **Settings → Trash**, remembering its **original path**, so restoring puts it back where it was (survives an Obsidian restart)
+- **Rubber-band select & blank-space menu** — **drag on empty space to box-select** (hold `Ctrl` to add); **right-click empty space** for new note / select all / switch view and more
+- **Built-in editor** — live preview (click to edit in place), split view (synced scrolling), or raw source. Right-click anywhere for the full formatting menu
 
-  ![内置编辑器：双栏分屏 + 大纲](docs/screenshots/editor.jpg)
+  ![Built-in editor: split view + outline](docs/screenshots/editor-en.png)
 
-- **三种打开方式** —— 右侧预览（默认）/ 工作面板 / 原生编辑，随时切换
+- **Three open modes** — side preview (default) / panel / native editor, switchable anytime
 
-  ![打开方式切换](docs/screenshots/open-mode.jpg)
+  ![Open-mode switcher](docs/screenshots/open-mode-en.jpg)
 
-  预览面板对图片 / PDF / 音视频各有处理：
+  The preview panel handles images / PDF / audio / video each in its own way:
 
-  ![图片预览](docs/screenshots/media.jpg)
-- **外观个性化** —— 壁纸、主题色、布局密度，**每个库可以单独配一套**；
-  界面本身跟随 Obsidian 主题（原生变量），换主题即换肤，不做独立皮肤
+  ![Image preview](docs/screenshots/media-en.jpg)
 
-  ![设置抽屉：外观页](docs/screenshots/settings.jpg)
-- **中英双语** —— 界面默认**跟随 Obsidian 的语言**；想固定就在
-  **⚙ 设置 → 通用 → 界面语言**里选「中文」或「English」，切完立刻生效、不用重启。
-  万一有漏翻的条目，会**原样显示 key** 而不是留一段中文，方便一眼定位
+- **Looks are configurable** — wallpapers, accent color, density, **a separate look per vault**. The interface itself is built on Obsidian's own CSS variables, so it follows your theme instead of shipping a separate skin
+
+  ![Settings drawer: appearance](docs/screenshots/settings-en.jpg)
+- **Bilingual UI** — the interface **follows Obsidian's own language** by default. To pin it, pick 中文 or English under **⚙ Settings → General → Interface language**; it applies instantly, no restart. Anything not yet translated shows its **raw key** rather than a stray Chinese string, so gaps are easy to spot
 
 ---
 
-## 📦 安装
+## 📦 Install
 
-设置 → 第三方插件 → 关闭安全模式 → 浏览 → 搜 **Vault Workbench** → 安装并启用。
+Settings → Community plugins → turn off Restricted mode → Browse → search **Vault Workbench** → install & enable.
 
-手动安装与 BRAT 见 **[安装说明](docs/安装说明.md)**。
-
----
-
-## 🚀 三步上手
-
-1. 点左侧 ribbon 的「布局网格」图标（或命令面板搜「打开多库工作台」）
-2. 左边列出你所有的库，带 `当前` 标记的是正在用的那个 —— 点库名切换浏览
-3. 想切过去编辑 → **右键那个库 → 切换到此库**（会先装好插件再跳）
-
-> 快捷键、编辑器细节、右键菜单全表、设置项说明 → 见插件内 **⚙ 设置 → 使用说明**，
-> 那里才是最新最全的一份。
+Manual install and BRAT: see **[Install guide](docs/安装说明.md)**.
 
 ---
 
-## 📌 为什么用多库架构？
+## 🚀 Quick start
 
-多库不是无奈妥协，而是**主动的知识管理设计**：
+1. Click the grid icon in the left ribbon (or run "Open Vault Workbench" from the command palette)
+2. All your vaults are listed on the left; the one marked `当前` is the active one. Click to browse another
+3. Want to edit there? → **right-click that vault → Switch to this vault** (the plugin is installed first, then it jumps)
 
-- 🔍 **查询隔离** —— Dataview、标签、全局搜索、任务查询互不污染；
-  单库要做到同等隔离，得写一堆过滤规则去维护
-- 🔄 **独立同步 & 发布** —— **每个仓库可单独配置云同步 / Git / 博客发布**
-  （这是多库架构自带的优势：本插件**不参与同步、也不合并你的库**，
-  所以你原有的同步与发布方案完全不受影响）
-- ⚡ **性能隔离** —— 归档项目库不必常驻索引，活跃库保持轻快
-- 🔒 **隐私隔离** —— 合同财务 / AI 素材 / 公开内容分库存放，可限制 AI 只访问素材库
-- 🧪 **独立配置** —— 每个库可以有自己的插件集与主题；折腾插件的试验库不会污染正式库
-- 🤝 **交付隔离** —— 给客户 / 同事只交付那一个项目库，不附带其他笔记
-
-> 详细理念与完整优势（11 条）：**[多库架构设计思考](docs/多库架构设计思考.md)**
+> Shortcuts, editor details, the full context-menu reference and every setting live in
+> **⚙ Settings → Usage** inside the plugin — that's the up-to-date reference.
 
 ---
 
-## ⚠️ 已知限制
+## 📌 Why run multiple vaults?
 
-- 仅**桌面端**（依赖 Node 文件读写与 `obsidian://` 协议）
-- 每个库**第一次**进要手动关一次「受限模式」—— Obsidian 的安全设计，插件无法预置，关一次永久生效
-- 内置编辑器是自研的，没有双链自动补全等 CodeMirror 能力（可一键跳原生编辑）
-- 跨库搜索是**子串匹配**（不分词的中文子串、大小写不敏感的英文），不是语义搜索；
-  第一篇建索引时会稍慢一次，之后走增量
+Multiple vaults aren't a compromise — they're a deliberate design choice:
+
+- 🔍 **Query isolation** — Dataview, tags, global search and task queries never leak between projects. Doing the same in one vault means maintaining a pile of filter rules
+- 🔄 **Independent sync & publish** — each vault can have its own cloud sync / Git / blog publishing setup. (This comes from the multi-vault architecture itself: **the plugin never syncs anything and never merges your vaults**, so your existing setup is untouched)
+- ⚡ **Performance isolation** — archived vaults don't sit in the index; the active vault stays fast
+- 🔒 **Privacy isolation** — contracts, AI source material and public content in separate vaults; you can give AI access to one vault only
+- 🧪 **Independent configuration** — each vault keeps its own plugin set and theme; a playground vault can't pollute your real one
+- 🤝 **Delivery isolation** — hand a client one project vault without shipping everything else
+
+> Full write-up (11 benefits): **[Multi-vault architecture (zh)](docs/多库架构设计思考.md)**
 
 ---
 
-## 🔒 会碰到的库外文件
+## ⚠️ Limitations
 
-跨库浏览必须「看得到库之外的文件」，这里一次说清楚。**全部在本机进行，不联网、无遥测**：
+- **Desktop only** — relies on Node file access and the `obsidian://` protocol
+- The **first** time you enter a vault you must turn off **Restricted mode** once — that's Obsidian's security design, no plugin can preset it. One click, permanent
+- The built-in editor is hand-rolled: no wikilink autocomplete or other CodeMirror features (one click jumps to the native editor)
+- Cross-vault search is **substring matching** (case-insensitive; Chinese is matched without word segmentation), not semantic search. The first search in a vault builds its index, so it's a bit slower once — after that it's incremental
 
-| 文件 | 动作 | 为什么 |
+---
+
+## 🔒 Files outside your vaults
+
+Browsing other vaults means reading outside the current one. All of this happens **locally — no network, no telemetry**:
+
+| File | Access | Why |
 | --- | --- | --- |
-| Obsidian 的 `obsidian.json` | 读 | 自动发现本机有哪些库（按系统定位配置目录） |
-| 其他库的笔记与附件 | 读 + 改 + 建 / 改名 / 删除 | 不切库就能浏览、编辑与改结构（原子写；删除进该库的 `.trash`，可撤销） |
-| 其他库的 `.trash/` | 写 | 在别的库删除的文件先挪到这里，不是直接删 |
-| 目标库的 `.obsidian/plugins/vault-workbench/` | 写 | 切库前把本插件装过去 |
-| 目标库的 `.obsidian/community-plugins.json` | 读写 | 在那边启用本插件 |
-| 本机 `vault-workbench/vaults.json` | 读写 | 跨库共享的库清单 |
-| 本机 `vault-workbench/index/*.json` | 读写 | **跨库全文搜索的索引**（存的是去语法后的纯文本，每篇最多 3000 字），删掉不影响笔记，下次搜索会重建 |
+| Obsidian's `obsidian.json` | read | Discover which vaults exist on this machine |
+| Notes & attachments in other vaults | read + write + create / rename / delete | Browse, edit and restructure without switching (atomic writes; deletes go to that vault's `.trash` and can be undone) |
+| `.trash/` in other vaults | write | Deleted files are moved here first — never removed outright |
+| `.obsidian/plugins/vault-workbench/` in the target vault | write | Install the plugin there before switching |
+| `.obsidian/community-plugins.json` in the target vault | read/write | Enable the plugin there |
+| `vault-workbench/vaults.json` on this machine | read/write | Shared list of vaults |
+| `vault-workbench/index/*.json` on this machine | read/write | **Cross-vault search index** (plain text with markup stripped, capped at 3000 chars per note). Deleting it never touches your notes — it's rebuilt on the next search |
 
-自部署只会在**已经是 Obsidian 库**（里面有 `.obsidian`）的文件夹里进行，不会凭空造出一个新库。
+Self-install only happens in folders that **already are vaults** (they contain `.obsidian`). It never turns a random folder into a new vault.
 
 ---
 
-## 🔗 更多
+## 🔗 More
 
-[English](README_EN.md) · [安装说明](docs/安装说明.md) · [多库架构设计思考](docs/多库架构设计思考.md) ·
-[架构设计](docs/ARCHITECTURE.md) ·
-[更新日志](CHANGELOG.md) · [参与开发](CONTRIBUTING.md)
+[中文文档](README_ZH.md) · [Multi-vault architecture (zh)](docs/多库架构设计思考.md) ·
+[Architecture (zh)](docs/ARCHITECTURE.md) ·
+[Changelog](CHANGELOG.md)
 
-## 许可
+## License
 
 [MIT](LICENSE) © 2026 Bevis23
