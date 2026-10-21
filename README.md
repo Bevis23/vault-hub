@@ -26,6 +26,8 @@
 | **Middle · Files** | Folder drill-down + breadcrumbs, grid / list views, search & sort, **multi-select batch actions** |
 | **Right · Preview** | Read, edit, outline. Images / PDF / audio / video / text all handled |
 
+- **Four dashboard cards** — a permanent overview strip at the top of the file area, counting the **current vault only**: **total notes** (`MD n · Canvas n · Excalidraw n`), **modified this week**, **inbox**, and **tags**. **Click a card to filter** — click 本周修改 to see the last 7 days, click 标签库 for a tag panel with multi-select intersection. Search term, folder, tag and time window all **stack with AND**; the inbox folder name is configurable and gets created for you on first click
+
 - **One place for all vaults** — no window switching, no reloading. Browsing another vault feels like browsing another folder. Empty folders show up too (the folder list comes from the vault's real directory tree, not guessed from notes)
 
   ![Vault navigation demo](docs/gif/vault-navigation-en.gif)
