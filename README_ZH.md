@@ -2,6 +2,8 @@
 
 > 🇨🇳 给 Obsidian 装上精美工作台 UI：在一个工作台浏览、预览、编辑本机所有 Obsidian 库，无需反复切换窗口。各库保持完全隔离，切换库时自动部署本插件。
 
+[English](README.md)
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-desktop--only-blue)
 ![No build](https://img.shields.io/badge/build-none-brightgreen)

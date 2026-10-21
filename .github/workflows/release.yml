@@ -1,0 +1,94 @@
+# ============================================================================
+#  Vault Workbench · 发布流水线（GitHub Actions）
+# ----------------------------------------------------------------------------
+#  作用：
+#    1. 生成 GitHub Artifact Attestation（构建溯源证明），满足 Obsidian 官方
+#       Scorecard 的安全建议，消除 "Missing GitHub artifact attestations for
+#       release assets" 这一条 —— 它不关，Review 分数上不去，"Add to Obsidian"
+#       就一直灰着、in-app 市场也搜不到。
+#    2. 校验 Tag 与 manifest.json 的版本一致，防止「打错 Tag 发错版」。
+#    3. 校验构建后的 main.js 已提交且与 src/ 同步，确保源码与发布产物强匹配。
+#
+#  证明由 actions/attest-build-provenance 通过 Sigstore 签发，把三件套
+#  （main.js / manifest.json / styles.css）绑定到「某次 commit + 某次 workflow」。
+#
+#  触发方式（推送不带 v 前缀、且等于 manifest.json version 的 Tag）：
+#      git push origin main
+#      git tag 0.14.3
+#      git push origin 0.14.3
+#
+#  本地核验命令（任何用户可自行验证发布产物确由本仓库构建）：
+#      gh attestation verify main.js --repo Bevis23/vault-hub
+#
+#  本项目零 npm 依赖：构建就是 node build.js（纯拼接），故无需 install 步骤，
+#  直接跑脚本即可；Ubuntu runner 自带 gh CLI，无需额外安装。
+# ============================================================================
+
+name: Release
+
+on:
+  push:
+    tags:
+      - '*'
+
+permissions:
+  contents: write # 创建 GitHub Release / 上传附件
+  id-token: write # 签发 Sigstore OIDC token
+  attestations: write # 写入 attestation
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      # tag 与 manifest 版本不一致时直接失败 —— 社区插件是按 manifest 读版本的，
+      # 两者错位会导致用户拿到「下载得到 0.14.3、显示 0.14.2」的鬼版本。
+      - name: Verify tag matches manifest version
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          ver="$(node -p "require('./manifest.json').version")"
+          echo "tag=$tag manifest=$ver"
+          if [ "$tag" != "$ver" ]; then
+            echo "::error::tag ($tag) does not match manifest.json version ($ver)"
+            exit 1
+          fi
+
+      - name: Build main.js from src/
+        run: node build.js
+
+      # 仓库里的 main.js 必须是 src/ 的最新产物，否则发布出去的和源码对不上
+      - name: Ensure committed main.js is up to date
+        run: |
+          if ! git diff --exit-code -- main.js; then
+            echo "::error::main.js is stale — run 'node build.js' and commit before tagging"
+            exit 1
+          fi
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: |
+            main.js
+            manifest.json
+            styles.css
+
+      - name: Publish GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ github.ref_name }}
+        run: |
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" main.js manifest.json styles.css --clobber
+          else
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes "Release $TAG. See [CHANGELOG.md](https://github.com/${GITHUB_REPOSITORY}/blob/HEAD/CHANGELOG.md) for details." \
+              main.js manifest.json styles.css
+          fi

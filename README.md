@@ -5,7 +5,7 @@
 > no more switching windows. Each vault stays fully isolated, and the plugin
 > installs itself into the target vault when you switch.
 
-[English](README_EN.md) | [中文文档](README_ZH.md)
+[中文文档](README_ZH.md)
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
 ![Platform](https://img.shields.io/badge/platform-desktop--only-blue)

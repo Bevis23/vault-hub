@@ -7,6 +7,31 @@
 
 ---
 
+## [0.14.3] - 2026-10-22 — 发布流水线（构建溯源证明）+ README 收尾
+
+### Added
+
+- **GitHub Actions 发布流水线**（`.github/workflows/release.yml`）：推 tag 时自动
+  `node build.js` 构建、校验 tag 与 `manifest.json` 版本一致、校验仓库里的 `main.js`
+  与 `src/` 同步，再用 `actions/attest-build-provenance` 为 `main.js` / `manifest.json` /
+  `styles.css` 签发构建溯源证明（build provenance attestation），最后创建 GitHub Release。
+  官方 Scorecard 的建议项 **"Missing GitHub artifact attestations for release assets"**
+  由此关闭；用户可以自行核验：
+  `gh attestation verify main.js --repo Bevis23/vault-hub`
+- `README_ZH.md` 顶部补回英文门面链接
+
+### Changed
+
+- 补上 0.14.2 承诺但没实际执行的清理：删除冗余的 `README_EN.md`，
+  修掉 `README.md` 顶部指向它的死链
+
+### 说明
+
+- 0.14.2 之后的文档改动（英文优先 README、GIF 演示、仪表盘卡片截图说明）一并在本版打包，
+  不单独发版
+
+---
+
 ## [0.14.2] - 2026-10-20 — README 英文化（触发市场重扫）
 
 ### Changed

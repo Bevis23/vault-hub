@@ -1,7 +1,7 @@
 {
   "id": "vault-workbench",
   "name": "Vault Workbench",
-  "version": "0.14.2",
+  "version": "0.14.3",
   "minAppVersion": "1.5.0",
   "description": "Browse, preview and edit notes across all local vaults in one unified workbench without switching windows. Vaults stay fully isolated, and switching to any vault sets everything up automatically.",
   "author": "Bevis23",
