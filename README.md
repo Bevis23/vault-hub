@@ -28,13 +28,13 @@
 
 - **One place for all vaults** — no window switching, no reloading. Browsing another vault feels like browsing another folder. Empty folders show up too (the folder list comes from the vault's real directory tree, not guessed from notes)
 
-  ![Vault navigation and context menu](docs/screenshots/vaults-en.png)
+  ![Vault navigation demo](docs/gif/vault-navigation-en.gif)
 
 - **Cross-vault full-text search** — flip 「📍 Current」 to 「🌐 All vaults」 in the toolbar and you're searching the **body text of every vault**. Each result shows which vault it's from, plus a **snippet with the match highlighted**. Click to open it right there. The index is built locally, and only when you actually search all vaults
 
   All vaults (full body text, 8 hits):
 
-  ![Cross-vault search](docs/screenshots/search-all-en.jpg)
+  ![Cross-vault search demo](docs/gif/search-all-en.gif)
 
   Current vault (names / tags, lightweight):
 
@@ -46,7 +46,7 @@
 - **Rubber-band select & blank-space menu** — **drag on empty space to box-select** (hold `Ctrl` to add); **right-click empty space** for new note / select all / switch view and more
 - **Built-in editor** — live preview (click to edit in place), split view (synced scrolling), or raw source. Right-click anywhere for the full formatting menu
 
-  ![Built-in editor: split view + outline](docs/screenshots/editor-en.png)
+  ![Built-in editor demo](docs/gif/editor-en.gif)
 
 - **Three open modes** — side preview (default) / panel / native editor, switchable anytime
 

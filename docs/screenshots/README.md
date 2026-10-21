@@ -22,6 +22,19 @@ README 与 Obsidian 市场页面要用的图都在这里（2026-10-20 已就位�
 
 > 截图均取自演示库（无隐私内容）；部分图带红框标注用于突出功能点。
 
+## GIF 动图（2026-10-21 起）
+
+`docs/gif/` 存放动图，README 中三处静态截图已替换为 GIF：
+
+| 英文版 | 中文版 | 内容 | 在 README 的位置 |
+| --- | --- | --- | --- |
+| `vault-navigation-en.gif` | `vault-navigation-zh.gif` | 点库切换浏览（动图演示） | 「多库统一导航」 |
+| `search-all-en.gif` | `search-all-zh.gif` | 🌐 所有库全文搜索操作过程 | 「跨库全文搜索」 |
+| `editor-en.gif` | `editor-zh.gif` | 内置编辑器即时渲染操作过程 | 「内置编辑器」 |
+
+中文版用 `-zh` 后缀同名文件（`vault-navigation-zh.gif` 等）。被替换的静态图
+（`vaults*.png` / `search-all*.jpg` / `editor*.png|jpg`）仍保留在本目录，未删除。
+
 ## 规范
 
 - 宽度 1200px 左右、PNG/JPG 均可
