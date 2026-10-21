@@ -67,7 +67,7 @@
 
 Settings → Community plugins → turn off Restricted mode → Browse → search **Vault Workbench** → install & enable.
 
-Manual install and BRAT: see **[Install guide](docs/安装说明.md)**.
+Manual install, BRAT and troubleshooting: see **[Install guide](docs/INSTALL.md)**.
 
 ---
 
